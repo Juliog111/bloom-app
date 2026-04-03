@@ -1176,7 +1176,10 @@ html, body {
       <div class="grat-row"><span class="grat-num">I</span><input class="grat-input" id="g1" placeholder="I'm grateful for…"/></div>
       <div class="grat-row"><span class="grat-num">II</span><input class="grat-input" id="g2" placeholder="I'm grateful for…"/></div>
       <div class="grat-row"><span class="grat-num">III</span><input class="grat-input" id="g3" placeholder="I'm grateful for…"/></div>
-      <button class="jp-save-btn" style="margin-top:0.8rem" onclick="saveGratitude()">Save gratitude</button>
+      <div style="margin-top:0.8rem;display:flex;align-items:center;gap:0.8rem">
+        <button class="jp-save-btn" onclick="saveGratitude()">Save gratitude</button>
+        <span class="jp-saved" id="grat-saved">✓ saved</span>
+      </div>
     </div>
   </div>
 </div>
@@ -1339,10 +1342,8 @@ function calcWeek(dueDateStr) {
 
 // ─── ONBOARDING ──────────────────────────────────────────────────────────────
 function startApp() {
-const name = document.getElementById('ob-name').value.trim();
-if (!name) { document.getElementById('ob-name').style.borderColor = 'var(--rose)'; document.getElementById('ob-name').focus(); return; }
-const due = document.getElementById('ob-due').value.trim();
-if (!due) { document.getElementById('ob-due').style.borderColor = 'var(--rose)'; document.getElementById('ob-due').focus(); return; }  
+  const name = document.getElementById('ob-name').value.trim() || 'Mama';
+  const due = document.getElementById('ob-due').value.trim();
   state.name = name;
   state.dueDate = due || null;
   state.currentWeek = calcWeek(due) || 12;
@@ -1559,12 +1560,17 @@ function saveJournal() {
 }
 
 function saveGratitude() {
-  state.gratitude[activeWeek] = {
-    1: document.getElementById('g1').value,
-    2: document.getElementById('g2').value,
-    3: document.getElementById('g3').value,
-  };
+  const g1 = document.getElementById('g1').value.trim();
+  const g2 = document.getElementById('g2').value.trim();
+  const g3 = document.getElementById('g3').value.trim();
+  if (!g1 && !g2 && !g3) return;
+  state.gratitude[activeWeek] = { 1: g1, 2: g2, 3: g3 };
   saveState();
+  const saved = document.getElementById('grat-saved');
+  if (saved) {
+    saved.classList.add('show');
+    setTimeout(() => saved.classList.remove('show'), 2500);
+  }
 }
 
 // ─── MEMORIES ────────────────────────────────────────────────────────────────
@@ -1624,6 +1630,7 @@ function goBack() {
 function resetApp() {
   if (confirm('Reset your BLOOM journey? This will clear all your data.')) {
     localStorage.removeItem('bloom_state');
+    localStorage.removeItem('bloom_sage_memory');
     state = { name:'', dueDate:null, currentWeek:12, scratchedWeeks:{}, journals:{}, gratitude:{} };
     document.getElementById('bottomNav').style.display = 'none';
     showScreen('onboard');
@@ -1634,6 +1641,39 @@ function resetApp() {
 
 // ─── SAGE ────────────────────────────────────────────────────────────────────
 let sageHistory = [];
+
+// Load sage memory from localStorage
+function loadSageMemory() {
+  try {
+    const saved = localStorage.getItem('bloom_sage_memory');
+    if (saved) {
+      const data = JSON.parse(saved);
+      // Only restore if it's from the last 7 days
+      const daysSince = (Date.now() - data.savedAt) / (1000 * 60 * 60 * 24);
+      if (daysSince < 7 && data.history && data.history.length > 0) {
+        sageHistory = data.history;
+        return true; // has memory
+      }
+    }
+  } catch(e) {}
+  return false; // no memory
+}
+
+function saveSageMemory() {
+  try {
+    // Only save last 20 messages to keep it lean
+    const toSave = sageHistory.slice(-20);
+    localStorage.setItem('bloom_sage_memory', JSON.stringify({
+      history: toSave,
+      savedAt: Date.now()
+    }));
+  } catch(e) {}
+}
+
+function clearSageMemory() {
+  localStorage.removeItem('bloom_sage_memory');
+  sageHistory = [];
+}
 let sageTyping = false;
 let sageInitialized = false;
 
@@ -1697,18 +1737,43 @@ function initSage() {
   const name = state.name || 'Mama';
   const w = state.currentWeek;
   const trimester = w < 14 ? 'first' : w < 28 ? 'second' : 'third';
-  const hasJournal = Object.keys(state.journals).length > 0;
+  const hasMemory = loadSageMemory();
 
-  let greeting;
-  if (hasJournal) {
-    const entries = Object.entries(state.journals).filter(([,v]) => v);
-    const last = entries[entries.length - 1];
-    greeting = `Hello, ${name}. I've been thinking about what you wrote in Week ${last[0]} — "${last[1].substring(0, 60)}${last[1].length > 60 ? '…' : ''}"\n\nYou're in Week ${w} now — ${d.title}. Your baby is the size of a ${d.fruit} and you're in your ${trimester} trimester.\n\nI'm Sage. I'm here for all of it — the big questions and the small ones, the hard days and the good ones. What's on your mind?`;
+  if (hasMemory && sageHistory.length > 0) {
+    const msgs = document.getElementById('sage-messages');
+    sageHistory.forEach(m => {
+      const isUser = m.role === 'user';
+      const initial = name[0].toUpperCase();
+      const wrap = document.createElement('div');
+      wrap.className = 'sage-msg' + (isUser ? ' user' : '');
+      const av = document.createElement('div');
+      av.className = 'msg-avatar ' + (isUser ? 'user-av' : 'sage-av');
+      av.textContent = isUser ? initial : '✦';
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-bubble';
+      bubble.style.whiteSpace = 'pre-wrap';
+      bubble.textContent = m.content;
+      wrap.appendChild(av);
+      wrap.appendChild(bubble);
+      msgs.appendChild(wrap);
+    });
+    msgs.scrollTop = msgs.scrollHeight;
+    const returning = `Welcome back, ${name}. You're in Week ${w} now — ${d.t}. I remember where we left off. What's on your mind today?`;
+    appendSageMessage('sage', returning);
+    sageHistory.push({ role: 'assistant', content: returning });
   } else {
-    greeting = `Hello, ${name}. I'm Sage — and I'm so glad you're here.\n\nYou're in Week ${w} of your journey — "${d.title}." Your baby is the size of a ${d.fruit} right now, growing in the quiet dark of you.\n\nI'm here to talk through anything. Pregnancy questions, how you're feeling, what's keeping you up at night, what you're excited about — all of it. I'm not a doctor, but I am a warm, honest friend who knows a great deal about this season of life.\n\nWhat's on your mind?`;
+    const hasJournal = Object.keys(state.journals).length > 0;
+    let greeting;
+    if (hasJournal) {
+      const entries = Object.entries(state.journals).filter(([,v]) => v);
+      const last = entries[entries.length - 1];
+      greeting = `Hello, ${name}. I've been thinking about what you wrote in Week ${last[0]} — "${last[1].substring(0,60)}${last[1].length>60?'…':''}"\n\nYou're in Week ${w} now — ${d.t}. Your baby is the size of a ${d.f} and you're in your ${trimester} trimester.\n\nI'm Sage. I'm here for all of it — the big questions and the small ones, the hard days and the good ones. What's on your mind?`;
+    } else {
+      greeting = `Hello, ${name}. I'm Sage — and I'm so glad you're here.\n\nYou're in Week ${w} of your journey — "${d.t}." Your baby is the size of a ${d.f} right now, growing in the quiet dark of you.\n\nI'm here to talk through anything. Pregnancy questions, how you're feeling, what's keeping you up at night, what you're most excited about — all of it. What's on your mind?`;
+    }
+    appendSageMessage('sage', greeting);
+    sageHistory.push({ role: 'assistant', content: greeting });
   }
-
-  appendSageMessage('sage', greeting);
 }
 
 function appendSageMessage(role, text) {
@@ -1882,23 +1947,27 @@ async function sendSageMessage(overrideText) {
   showTyping();
 
   try {
-    const resp = await fetch('/api/sage', {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1024,
         system: buildSystemPrompt(),
         messages: sageHistory.map(m => ({ role: m.role, content: m.content }))
       })
     });
 
     const data = await resp.json();
-    if (data.error) throw new Error(data.error);
-    const reply = data.reply;
+
+    if (data.error) throw new Error(data.error.message);
+    const reply = data.content?.[0]?.text;
     if (!reply) throw new Error('empty');
 
     removeTyping();
     appendSageMessage('sage', reply);
     sageHistory.push({ role: 'assistant', content: reply });
+    saveSageMemory();
 
   } catch(err) {
     console.log('Sage API error:', err.message);
@@ -1907,6 +1976,7 @@ async function sendSageMessage(overrideText) {
     const reply = buildFallbackResponse(text, sageHistory);
     appendSageMessage('sage', reply);
     sageHistory.push({ role: 'assistant', content: reply });
+    saveSageMemory();
   }
 
   if (sageHistory.length > 30) sageHistory = sageHistory.slice(-30);
