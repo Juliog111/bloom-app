@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BLOOM App</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blush: #f5ddd5;
+  --rose: #d4918a;
+  --rose-deep: #b86d65;
+  --rose-pale: #f9eeeb;
+  --cream: #fdf8f2;
+  --cream-card: #fffcf8;
+  --gold: #c9a96e;
+  --gold-light: #eedcb4;
+  --sage: #b0bba6;
+  --sage-light: #dce4d8;
+  --text: #2e2420;
+  --text-light: #8a7a72;
+  --text-muted: #b8a89e;
+  --locked: #e8e0d8;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--cream);
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── SCREENS ── */
+.screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transform: translateY(12px);
+  overflow: hidden;
+}
+.screen.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+/* ── ONBOARDING ── */
+#screen-onboard {
+  background: linear-gradient(160deg, #fdf8f2 0%, #f5ddd5 45%, #fbeee6 100%);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2.5rem 2rem;
+}
+
+.ob-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 5rem;
+  font-weight: 300;
+  color: var(--rose-deep);
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+.ob-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--text-light);
+  letter-spacing: 0.04em;
+  margin-bottom: 3rem;
+}
+.ob-flower {
+  margin: 0 auto 2.5rem;
+}
+.ob-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.8rem;
+}
+.ob-input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto 2rem;
+}
+.ob-input {
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(201,169,110,0.3);
+  border-radius: 40px;
+  padding: 0.85rem 1.4rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  color: var(--text);
+  text-align: center;
+  outline: none;
+  width: 100%;
+}
+.ob-input:focus { border-color: var(--rose); }
+.ob-input::placeholder { color: var(--text-muted); font-style: italic; }
+
+.btn-primary {
+  background: var(--rose-deep);
+  color: white;
+  border: none;
+  border-radius: 40px;
+  padding: 0.9rem 2.5rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(184,109,101,0.3);
+}
+.btn-primary:hover { background: var(--rose); transform: translateY(-1px); }
+
+/* ── STATUS BAR (top) ── */
+.status-bar {
+  padding: 0.9rem 1.4rem 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(201,169,110,0.12);
+  background: var(--cream);
+}
+.status-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--rose);
+}
+.status-week {
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── HOME SCREEN ── */
+#screen-home {
+  background: var(--cream);
+}
+
+.home-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.2rem 1.2rem 6rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hero card */
+.hero-card {
+  background: linear-gradient(135deg, var(--rose-pale), #fff8f4);
+  border: 1px solid rgba(212,145,138,0.25);
+  border-radius: 20px;
+  padding: 1.8rem 1.6rem;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 20px rgba(212,145,138,0.12);
+}
+.hero-card:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(212,145,138,0.18); }
+
+.hero-left { flex: 1; }
+.hero-greeting {
+  font-size: 0.58rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--rose);
+  margin-bottom: 0.3rem;
+}
+.hero-week {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.6rem;
+  font-weight: 300;
+  color: var(--rose-deep);
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--text-light);
+  margin-bottom: 0.9rem;
+}
+.hero-cta {
+  display: inline-block;
+  background: var(--rose-deep);
+  color: white;
+  border-radius: 30px;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.hero-fruit {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blush), #fff8f4);
+  border: 1px solid rgba(201,169,110,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 12px rgba(201,169,110,0.15);
+}
+
+/* Progress bar */
+.progress-section {
+  margin-bottom: 1.2rem;
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+.progress-track {
+  height: 4px;
+  background: var(--sage-light);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--rose), var(--gold));
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+/* Week strip */
+.weeks-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.7rem;
+}
+.weeks-strip {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.4rem;
+  scrollbar-width: none;
+  margin-bottom: 1.4rem;
+}
+.weeks-strip::-webkit-scrollbar { display: none; }
+
+.wk-chip {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.18s;
+  border: 1px solid transparent;
+  position: relative;
+}
+.wk-chip.current { background: var(--rose); color: white; box-shadow: 0 2px 12px rgba(212,145,138,0.4); }
+.wk-chip.unlocked { background: var(--cream-card); border-color: rgba(212,145,138,0.3); color: var(--rose-deep); }
+.wk-chip.unlocked:hover { background: var(--blush); }
+.wk-chip.locked { background: var(--locked); color: var(--text-muted); cursor: default; }
+.wk-chip.scratched::after {
+  content: '✓';
+  position: absolute;
+  top: -3px; right: -3px;
+  width: 14px; height: 14px;
+  background: var(--gold);
+  border-radius: 50%;
+  font-size: 7px;
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-family: sans-serif;
+}
+
+/* Memory tiles */
+.memories-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.7rem;
+}
+.memory-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.memory-tile {
+  background: var(--cream-card);
+  border: 1px solid rgba(201,169,110,0.18);
+  border-radius: 14px;
+  padding: 1.1rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.memory-tile:hover { transform: translateY(-2px); box-shadow: 0 4px 18px rgba(201,169,110,0.14); }
+.mt-week {
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.3rem;
+}
+.mt-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.88rem;
+  font-style: italic;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+.mt-icon { margin-bottom: 0.5rem; font-size: 1.2rem; }
+
+/* ── WEEK DETAIL SCREEN ── */
+#screen-week {
+  background: var(--cream);
+}
+
+.week-detail-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.week-header {
+  padding: 1.4rem 1.4rem 0;
+  text-align: center;
+  position: relative;
+}
+.back-btn {
+  position: absolute;
+  left: 1.2rem;
+  top: 1.4rem;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: var(--rose);
+  cursor: pointer;
+  padding: 0.2rem;
+}
+.wk-brand {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.wk-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4.5rem;
+  font-weight: 300;
+  color: var(--rose);
+  line-height: 1;
+}
+.wk-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--text-light);
+  margin-bottom: 1.2rem;
+}
+
+.wk-fruit-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0 1.4rem 1.2rem;
+}
+.wk-dline { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-light), transparent); }
+.wk-fruit-wrap { text-align: center; }
+.wk-fruit-circle {
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blush), var(--cream));
+  border: 1px solid var(--gold-light);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 10px rgba(201,169,110,0.18);
+  margin: 0 auto;
+}
+.wk-fruit-name {
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+}
+
+.wk-section {
+  padding: 1rem 1.4rem;
+  border-top: 1px solid rgba(201,169,110,0.14);
+}
+.wk-slabel {
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+.wk-body {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  line-height: 1.78;
+  color: var(--text);
+}
+.wk-nourish {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-light);
+}
+
+/* SCRATCH panel */
+.scratch-panel {
+  padding: 1.2rem 1.4rem 1.4rem;
+  border-top: 1px solid rgba(201,169,110,0.14);
+}
+.sp-intro {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 0.8rem;
+}
+.sp-container {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: crosshair;
+  box-shadow: 0 2px 16px rgba(201,169,110,0.22);
+}
+.sp-reveal {
+  background: linear-gradient(135deg, #fff8f5, #fdf0ea);
+  border: 1.5px solid var(--rose);
+  border-radius: 14px;
+  padding: 1.6rem 1.3rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 130px;
+}
+.sp-eyebrow {
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--rose);
+}
+.sp-prompt {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  line-height: 1.55;
+  color: var(--text);
+  font-weight: 500;
+}
+.sp-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.87rem;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+.sp-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border-radius: 14px;
+  touch-action: none;
+  transition: opacity 0.7s ease;
+}
+.sp-canvas.faded { opacity: 0; pointer-events: none; }
+.sp-hint {
+  text-align: center;
+  margin-top: 0.6rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color 0.4s;
+}
+
+/* Journal section */
+.journal-panel {
+  padding: 1rem 1.4rem 1.6rem;
+  border-top: 1px solid rgba(201,169,110,0.14);
+}
+.jp-prompt {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--text-light);
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+}
+.jp-textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(201,169,110,0.3);
+  padding: 0.5rem 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--text);
+  resize: none;
+  outline: none;
+  line-height: 2;
+  display: block;
+  min-height: 4rem;
+}
+.jp-save-btn {
+  margin-top: 0.8rem;
+  background: transparent;
+  border: 1px solid var(--rose);
+  color: var(--rose);
+  border-radius: 30px;
+  padding: 0.45rem 1.2rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.jp-save-btn:hover { background: var(--rose); color: white; }
+.jp-saved {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--sage);
+  text-transform: uppercase;
+  margin-left: 0.8rem;
+  display: none;
+}
+.jp-saved.show { display: inline; }
+
+/* Gratitude */
+.grat-panel {
+  padding: 1rem 1.4rem 2rem;
+  border-top: 1px solid rgba(201,169,110,0.14);
+}
+.grat-prompt {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--text-light);
+  margin-bottom: 0.8rem;
+}
+.grat-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.5rem;
+}
+.grat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.78rem;
+  color: var(--gold);
+  width: 14px;
+  flex-shrink: 0;
+}
+.grat-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(201,169,110,0.28);
+  padding: 0.3rem 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  color: var(--text);
+  outline: none;
+}
+.grat-input::placeholder { color: var(--text-muted); font-style: italic; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(253,248,242,0.96);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(201,169,110,0.18);
+  display: flex;
+  padding: 0.6rem 0 0.8rem;
+  z-index: 50;
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  padding: 0.2rem 0;
+  background: none;
+  border: none;
+}
+.nav-item svg { width: 22px; height: 22px; stroke: var(--text-muted); transition: stroke 0.15s; }
+.nav-item span { font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); transition: color 0.15s; }
+.nav-item.active svg { stroke: var(--rose); }
+.nav-item.active span { color: var(--rose); }
+
+/* ── MEMORIES SCREEN ── */
+#screen-memories {
+  background: var(--cream);
+}
+.mem-scroll { flex: 1; overflow-y: auto; padding: 1.2rem 1.2rem 6rem; }
+.mem-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 300;
+  color: var(--rose-deep);
+  margin-bottom: 0.3rem;
+}
+.mem-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 1.4rem;
+}
+.mem-entry {
+  background: var(--cream-card);
+  border: 1px solid rgba(201,169,110,0.18);
+  border-radius: 14px;
+  padding: 1.1rem 1.2rem;
+  margin-bottom: 0.9rem;
+}
+.me-week { font-size: 0.55rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.3rem; }
+.me-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--text);
+  font-style: italic;
+}
+.me-empty {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 2rem 0;
+}
+
+/* ── PROFILE SCREEN ── */
+#screen-profile {
+  background: var(--cream);
+}
+.prof-scroll { flex: 1; overflow-y: auto; padding: 1.4rem 1.4rem 6rem; }
+.prof-avatar {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blush), var(--rose-pale));
+  border: 2px solid rgba(212,145,138,0.3);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  color: var(--rose);
+}
+.prof-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 0.2rem;
+}
+.prof-meta {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.prof-stat-row {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 1.4rem;
+}
+.prof-stat {
+  flex: 1;
+  background: var(--cream-card);
+  border: 1px solid rgba(201,169,110,0.18);
+  border-radius: 14px;
+  padding: 1rem;
+  text-align: center;
+}
+.ps-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 300;
+  color: var(--rose);
+  line-height: 1;
+}
+.ps-label { font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-top: 0.2rem; }
+
+.prof-section-title {
+  font-size: 0.58rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.8rem;
+}
+.prof-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid rgba(201,169,110,0.12);
+}
+.pr-label { font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--text); }
+.pr-value { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em; }
+
+/* ── SAGE SCREEN ── */
+#screen-sage {
+  background: linear-gradient(180deg, #1e1814 0%, #2a1f1c 100%);
+  padding-bottom: 70px;
+}
+
+.sage-header {
+  padding: 1rem 1.4rem 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(201,169,110,0.12);
+  flex-shrink: 0;
+}
+
+.sage-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sage-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #9aab96, #b0bba6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+  box-shadow: 0 0 12px rgba(154,171,150,0.35);
+}
+
+.sage-name-wrap { display: flex; flex-direction: column; }
+
+.sage-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: #f2dbd5;
+  letter-spacing: 0.03em;
+}
+
+.sage-status {
+  font-size: 0.52rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #9aab96;
+}
+
+.sage-week-badge {
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(201,169,110,0.6);
+  border: 1px solid rgba(201,169,110,0.2);
+  border-radius: 20px;
+  padding: 0.25rem 0.7rem;
+}
+
+/* Chat area */
+.sage-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.2rem 1.2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sage-msg {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-end;
+  animation: fadeUp 0.3s ease;
+}
+
+.sage-msg.user { flex-direction: row-reverse; }
+
+.msg-avatar {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+}
+
+.msg-avatar.sage-av {
+  background: linear-gradient(135deg, #9aab96, #b0bba6);
+  color: white;
+}
+
+.msg-avatar.user-av {
+  background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+  color: white;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.msg-bubble {
+  max-width: 78%;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.sage-msg:not(.user) .msg-bubble {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(201,169,110,0.15);
+  color: rgba(242,219,213,0.92);
+  border-bottom-left-radius: 4px;
+}
+
+.sage-msg.user .msg-bubble {
+  background: linear-gradient(135deg, var(--rose-deep), #c47870);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+/* Typing indicator */
+.typing-bubble {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(201,169,110,0.15);
+  border-radius: 16px;
+  border-bottom-left-radius: 4px;
+  width: fit-content;
+}
+
+.typing-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(154,171,150,0.7);
+  animation: typingPulse 1.2s ease-in-out infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingPulse {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* Suggestion chips */
+.sage-suggestions {
+  padding: 0 1.2rem 0.8rem;
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+.sage-suggestions::-webkit-scrollbar { display: none; }
+
+.sage-chip {
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(201,169,110,0.25);
+  border-radius: 20px;
+  padding: 0.4rem 0.9rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.82rem;
+  color: rgba(242,219,213,0.7);
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+.sage-chip:hover, .sage-chip:active {
+  background: rgba(201,169,110,0.12);
+  border-color: rgba(201,169,110,0.4);
+  color: rgba(242,219,213,0.95);
+}
+
+/* Input area */
+.sage-input-area {
+  padding: 0.8rem 1.2rem 1rem;
+  border-top: 1px solid rgba(201,169,110,0.1);
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-end;
+  flex-shrink: 0;
+  background: rgba(22, 15, 12, 0.98);
+}
+
+.sage-textarea {
+  flex: 1;
+  background: rgba(255,255,255,0.09);
+  border: 1.5px solid rgba(201,169,110,0.35);
+  border-radius: 20px;
+  padding: 0.75rem 1.1rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: rgba(242,219,213,0.95);
+  resize: none;
+  outline: none;
+  line-height: 1.5;
+  max-height: 100px;
+  min-height: 44px;
+  overflow-y: auto;
+}
+.sage-textarea::placeholder { color: rgba(242,219,213,0.4); font-style: italic; }
+.sage-textarea:focus { border-color: rgba(154,171,150,0.6); background: rgba(255,255,255,0.12); }
+
+.sage-send {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #9aab96, #7a9076);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  box-shadow: 0 2px 10px rgba(154,171,150,0.3);
+}
+.sage-send:hover { transform: scale(1.05); }
+.sage-send svg { width: 16px; height: 16px; stroke: white; }
+
+/* Sage nav entry point on home */
+.sage-home-card {
+  background: linear-gradient(135deg, #1e1814, #2a1f1c);
+  border: 1px solid rgba(154,171,150,0.2);
+  border-radius: 16px;
+  padding: 1.2rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+}
+.sage-home-card:hover { transform: translateY(-2px); border-color: rgba(154,171,150,0.35); }
+
+.shc-left { flex: 1; }
+.shc-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #9aab96;
+  margin-bottom: 0.25rem;
+}
+.shc-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  color: #f2dbd5;
+  margin-bottom: 0.15rem;
+}
+.shc-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.8rem;
+  color: rgba(242,219,213,0.45);
+}
+
+.shc-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #9aab96, #b0bba6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  box-shadow: 0 0 16px rgba(154,171,150,0.25);
+  flex-shrink: 0;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: fadeUp 0.4s ease forwards; }
+
+</style>
+</head>
+<body>
+
+<!-- ════ ONBOARDING ════ -->
+<div class="screen active" id="screen-onboard">
+  <div class="ob-logo">bloom</div>
+  <div class="ob-tagline">experience every week, not just survive it</div>
+
+  <div class="ob-flower">
+    <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="46" fill="rgba(212,145,138,0.07)" stroke="rgba(201,169,110,0.25)" stroke-width="1"/>
+      <ellipse cx="50" cy="28" rx="7" ry="13" fill="rgba(212,145,138,0.4)" transform="rotate(0 50 50)"/>
+      <ellipse cx="50" cy="28" rx="7" ry="13" fill="rgba(212,145,138,0.32)" transform="rotate(45 50 50)"/>
+      <ellipse cx="50" cy="28" rx="7" ry="13" fill="rgba(212,145,138,0.28)" transform="rotate(90 50 50)"/>
+      <ellipse cx="50" cy="28" rx="7" ry="13" fill="rgba(212,145,138,0.32)" transform="rotate(135 50 50)"/>
+      <circle cx="50" cy="50" r="10" fill="rgba(201,169,110,0.45)"/>
+      <circle cx="50" cy="50" r="6" fill="rgba(201,169,110,0.65)"/>
+    </svg>
+  </div>
+
+  <div class="ob-label">Let's begin</div>
+  <div class="ob-input-wrap">
+    <input class="ob-input" id="ob-name" placeholder="Your name" type="text"/>
+    <input class="ob-input" id="ob-due" placeholder="Due date (MM/DD/YYYY)" type="text"/>
+  </div>
+  <button class="btn-primary" onclick="startApp()">Begin my journey →</button>
+</div>
+
+<!-- ════ BOTTOM NAV ════ -->
+<nav class="bottom-nav" id="bottomNav" style="display:none">
+  <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
+    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+    <span>Home</span>
+  </button>
+  <button class="nav-item" id="nav-memories" onclick="switchTab('memories')">
+    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.966 8.966 0 00-6 2.292m0-14.25v14.25"/></svg>
+    <span>Memories</span>
+  </button>
+  <button class="nav-item" id="nav-sage" onclick="switchTab('sage')">
+    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/><path stroke-linecap="round" stroke-linejoin="round" d="M18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"/></svg>
+    <span>Sage</span>
+  </button>
+  <button class="nav-item" id="nav-profile" onclick="switchTab('profile')">
+    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+    <span>Me</span>
+  </button>
+</nav>
+
+<!-- ════ HOME ════ -->
+<div class="screen" id="screen-home">
+  <div class="status-bar">
+    <div class="status-brand">bloom</div>
+    <div class="status-week" id="status-week-label"></div>
+  </div>
+  <div class="home-scroll">
+    <!-- Hero -->
+    <div class="hero-card animate-in" onclick="openCurrentWeek()" id="hero-card">
+      <div class="hero-left">
+        <div class="hero-greeting" id="hero-greeting">Good morning</div>
+        <div class="hero-week" id="hero-week-num">—</div>
+        <div class="hero-title" id="hero-week-title">loading…</div>
+        <div class="hero-cta">This week's experience →</div>
+      </div>
+      <div class="hero-fruit" id="hero-fruit-circle">
+        <svg width="40" height="40" viewBox="0 0 60 60" fill="none" id="hero-fruit-svg"></svg>
+      </div>
+    </div>
+
+    <!-- Sage card -->
+    <div class="sage-home-card animate-in" onclick="switchTab('sage')" style="animation-delay:0.1s">
+      <div class="shc-left">
+        <div class="shc-label">Your companion</div>
+        <div class="shc-name">Sage</div>
+        <div class="shc-sub">Ask me anything about your pregnancy</div>
+      </div>
+      <div class="shc-avatar">✦</div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-section animate-in" style="animation-delay:0.08s">
+      <div class="progress-label">
+        <span>Your journey</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- Week strip -->
+    <div class="weeks-label animate-in" style="animation-delay:0.12s">Your weeks</div>
+    <div class="weeks-strip animate-in" id="weeks-strip" style="animation-delay:0.14s"></div>
+
+    <!-- Memory tiles -->
+    <div class="memories-label animate-in" style="animation-delay:0.18s">Recent moments</div>
+    <div class="memory-grid animate-in" id="memory-grid" style="animation-delay:0.2s"></div>
+  </div>
+</div>
+
+<!-- ════ WEEK DETAIL ════ -->
+<div class="screen" id="screen-week">
+  <div class="week-detail-scroll" id="week-detail-scroll">
+    <div class="week-header">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <div class="wk-brand">Bloom</div>
+      <div class="wk-num" id="wd-num">—</div>
+      <div class="wk-title" id="wd-title">—</div>
+    </div>
+    <div class="wk-fruit-row">
+      <div class="wk-dline"></div>
+      <div class="wk-fruit-wrap">
+        <div class="wk-fruit-circle">
+          <svg width="40" height="40" viewBox="0 0 60 60" fill="none" id="wd-fruit-svg"></svg>
+        </div>
+        <div class="wk-fruit-name" id="wd-fruit-name">—</div>
+      </div>
+      <div class="wk-dline"></div>
+    </div>
+    <div class="wk-section">
+      <div class="wk-slabel">This week, inside you</div>
+      <p class="wk-body" id="wd-body">—</p>
+    </div>
+    <div class="wk-section">
+      <div class="wk-slabel">Nourish</div>
+      <p class="wk-nourish" id="wd-nourish">—</p>
+    </div>
+    <div class="scratch-panel">
+      <div class="wk-slabel" style="text-align:center">Your weekly experience</div>
+      <p class="sp-intro">Scratch to reveal your moment for this week.</p>
+      <div class="sp-container" id="sp-container">
+        <div class="sp-reveal">
+          <div class="sp-eyebrow">This week's invitation</div>
+          <div class="sp-prompt" id="sp-prompt">—</div>
+          <div class="sp-sub" id="sp-sub">—</div>
+        </div>
+        <canvas class="sp-canvas" id="sp-canvas"></canvas>
+      </div>
+      <div class="sp-hint" id="sp-hint">✦ scratch here ✦</div>
+    </div>
+    <div class="journal-panel">
+      <div class="wk-slabel">Journal</div>
+      <p class="jp-prompt" id="wd-journal-q">—</p>
+      <textarea class="jp-textarea" id="wd-journal-text" placeholder="Write here…" rows="3"></textarea>
+      <div>
+        <button class="jp-save-btn" onclick="saveJournal()">Save this memory</button>
+        <span class="jp-saved" id="jp-saved">✓ saved</span>
+      </div>
+    </div>
+    <div class="grat-panel">
+      <div class="wk-slabel">Gratitude</div>
+      <p class="grat-prompt">Three things I'm grateful for this week:</p>
+      <div class="grat-row"><span class="grat-num">I</span><input class="grat-input" id="g1" placeholder="I'm grateful for…"/></div>
+      <div class="grat-row"><span class="grat-num">II</span><input class="grat-input" id="g2" placeholder="I'm grateful for…"/></div>
+      <div class="grat-row"><span class="grat-num">III</span><input class="grat-input" id="g3" placeholder="I'm grateful for…"/></div>
+      <button class="jp-save-btn" style="margin-top:0.8rem" onclick="saveGratitude()">Save gratitude</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SAGE ════ -->
+<div class="screen" id="screen-sage">
+  <div class="sage-header">
+    <div class="sage-brand">
+      <div class="sage-avatar">✦</div>
+      <div class="sage-name-wrap">
+        <div class="sage-name">Sage</div>
+        <div class="sage-status" id="sage-status">here for you</div>
+      </div>
+    </div>
+    <div class="sage-week-badge" id="sage-week-badge">Week —</div>
+  </div>
+
+  <div class="sage-messages" id="sage-messages"></div>
+
+  <div class="sage-suggestions" id="sage-suggestions">
+    <div class="sage-chip" onclick="sendChip(this)">What's happening this week?</div>
+    <div class="sage-chip" onclick="sendChip(this)">I'm feeling anxious</div>
+    <div class="sage-chip" onclick="sendChip(this)">I'm so exhausted</div>
+    <div class="sage-chip" onclick="sendChip(this)">I can't sleep</div>
+    <div class="sage-chip" onclick="sendChip(this)">Tell me about labor</div>
+    <div class="sage-chip" onclick="sendChip(this)">I'm feeling emotional</div>
+    <div class="sage-chip" onclick="sendChip(this)">I'm always hungry</div>
+    <div class="sage-chip" onclick="sendChip(this)">I'm scared</div>
+    <div class="sage-chip" onclick="sendChip(this)">My back is killing me</div>
+    <div class="sage-chip" onclick="sendChip(this)">I feel bloated</div>
+  </div>
+
+  <div class="sage-input-area">
+    <textarea class="sage-textarea" id="sage-input" placeholder="Ask Sage anything…" rows="1"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSageMessage()}"
+      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+    <button class="sage-send" onclick="sendSageMessage()">
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ════ MEMORIES ════ -->
+<div class="screen" id="screen-memories">
+  <div class="status-bar">
+    <div class="status-brand">bloom</div>
+    <div class="status-week">Your memories</div>
+  </div>
+  <div class="mem-scroll">
+    <div class="mem-heading">Memories</div>
+    <div class="mem-sub">Every word you've written, saved here.</div>
+    <div id="mem-list"></div>
+  </div>
+</div>
+
+<!-- ════ PROFILE ════ -->
+<div class="screen" id="screen-profile">
+  <div class="status-bar">
+    <div class="status-brand">bloom</div>
+    <div class="status-week">Your journey</div>
+  </div>
+  <div class="prof-scroll">
+    <div class="prof-avatar" id="prof-avatar">✦</div>
+    <div class="prof-name" id="prof-name">—</div>
+    <div class="prof-meta" id="prof-meta">—</div>
+    <div class="prof-stat-row">
+      <div class="prof-stat">
+        <div class="ps-num" id="stat-week">—</div>
+        <div class="ps-label">Current week</div>
+      </div>
+      <div class="prof-stat">
+        <div class="ps-num" id="stat-scratched">0</div>
+        <div class="ps-label">Revealed</div>
+      </div>
+      <div class="prof-stat">
+        <div class="ps-num" id="stat-written">0</div>
+        <div class="ps-label">Memories</div>
+      </div>
+    </div>
+    <div class="prof-section-title">Your details</div>
+    <div class="prof-row"><span class="pr-label">Due date</span><span class="pr-value" id="prof-due">—</span></div>
+    <div class="prof-row"><span class="pr-label">Weeks to go</span><span class="pr-value" id="prof-weeks-left">—</span></div>
+    <div class="prof-row"><span class="pr-label">Trimester</span><span class="pr-value" id="prof-trimester">—</span></div>
+    <div class="prof-row" style="border:none">
+      <span class="pr-label">Start over</span>
+      <button onclick="resetApp()" style="font-size:0.7rem;color:var(--rose);background:none;border:none;cursor:pointer;letter-spacing:0.05em;">Reset</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── WEEK DATA ───────────────────────────────────────────────────────────────
+const WEEKS = [
+  {w:3,title:"the seed takes root",t:1,fruit:"poppy seed",svg:`<ellipse cx="30" cy="30" rx="6" ry="9" fill="#c9967a" fill-opacity="0.8"/><ellipse cx="28" cy="26" rx="2" ry="3" fill="white" fill-opacity="0.3"/>`,body:"Smaller than a poppy seed, your baby is a cluster of cells that has nestled into the warmth of your uterine lining. Implantation is happening. Life is beginning.",nourish:"Start folate now. Leafy greens, lentils, fortified grains. This tiny cluster needs it for the neural tube forming in the weeks ahead.",prompt:"Write a letter to your future self.",sub:"Seal it. Open it on your baby's first birthday.",jq:"This week, the first thing I felt when I found out was…"},
+  {w:4,title:"the quiet before the storm",t:1,fruit:"apple seed",svg:`<ellipse cx="30" cy="32" rx="7" ry="10" fill="#b87a6a" fill-opacity="0.75"/><path d="M30 20 C30 20 28 14 32 12" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Your baby is now an embryo. She's about the size of an apple seed. A heartbeat will form in just days. You may not feel anything yet. She is already everything.",nourish:"Ginger tea is your friend if nausea arrives early. Keep crackers near your bed. Your body is doing enormous work even when it's invisible.",prompt:"Take a before photo.",sub:"Stand in front of a mirror. Photograph your belly — the one that will stretch and grow to hold your greatest love.",jq:"Right now, my biggest hope for this pregnancy is…"},
+  {w:5,title:"the heartbeat begins",t:1,fruit:"sesame seed",svg:`<ellipse cx="30" cy="30" rx="5" ry="8" fill="#c9a96e" fill-opacity="0.85"/><ellipse cx="28" cy="27" rx="1.5" ry="2.5" fill="white" fill-opacity="0.25"/>`,body:"A tiny heart is beginning to beat. The neural tube is forming. Arm and leg buds are appearing. Your baby is the size of a sesame seed and already organizing herself.",nourish:"Vitamin B6 can calm morning sickness. Try eating small amounts every 2 hours — empty stomachs intensify nausea.",prompt:"Find something tiny that will belong to her.",sub:"A pair of impossibly small socks. A wooden block. Set it somewhere visible. Let it make it real.",jq:"When I imagine who this baby will be, I see…"},
+  {w:6,title:"a face begins to form",t:1,fruit:"sweet pea",svg:`<ellipse cx="30" cy="34" rx="9" ry="11" fill="#9aac95" fill-opacity="0.5"/><ellipse cx="30" cy="26" rx="7" ry="8" fill="#b0bba6" fill-opacity="0.7"/><path d="M30 15 C28 12 26 10 28 8" stroke="#9aac95" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Facial features are beginning — dark spots where eyes will be, a tiny indentation that will become a mouth. Her heart beats 110 times per minute. She is the size of a sweet pea.",nourish:"Iron is being used at record levels. Red meat, spinach, lentils — pair with vitamin C for absorption. Fatigue is often iron, not weakness.",prompt:"Tell someone you trust.",sub:"Choose one person and let the secret out. Carrying joy alone is still a kind of loneliness.",jq:"The person I want most to share this with is… because…"},
+  {w:7,title:"tiny hands forming",t:1,fruit:"blueberry",svg:`<circle cx="30" cy="32" r="13" fill="#7a82b8" fill-opacity="0.7"/><circle cx="25" cy="27" r="4" fill="white" fill-opacity="0.15"/><path d="M28 20 C28 18 30 17 32 18" stroke="#9a9acc" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Your baby is the size of a blueberry and has hands — paddle-shaped still, but unmistakably hands. Her brain generates 100 new cells per minute. She is waving in the dark.",nourish:"Zinc supports rapid cell division happening now. Pumpkin seeds, chickpeas, Greek yogurt. Your baby needs you nourished.",prompt:"Start a 'day one' playlist.",sub:"Build a playlist of songs you want playing when you first hold her. Add one song every week.",jq:"A song that feels like this pregnancy is…"},
+  {w:8,title:"she is unmistakably human",t:1,fruit:"raspberry",svg:`<circle cx="30" cy="30" r="12" fill="#d4607a" fill-opacity="0.25"/><circle cx="24" cy="26" r="5" fill="#d4607a" fill-opacity="0.6"/><circle cx="34" cy="25" r="5" fill="#d4607a" fill-opacity="0.55"/><circle cx="30" cy="34" r="5" fill="#d4607a" fill-opacity="0.65"/>`,body:"Every essential organ has begun to form. She has a nose. She has lips. Your baby is the size of a raspberry and is already distinctly, undeniably human.",nourish:"Calcium is critical as her tiny skeleton begins hardening. Dairy, fortified milks, almonds, chia seeds. A smoothie with yogurt and berries counts.",prompt:"Schedule your first prenatal appointment.",sub:"Then celebrate it. The first time you hear her heartbeat will be something you never forget.",jq:"What I'm most looking forward to at my first appointment is…"},
+  {w:9,title:"the embryo becomes a fetus",t:1,fruit:"grape",svg:`<circle cx="30" cy="32" r="11" fill="#9b7dc8" fill-opacity="0.65"/><circle cx="26" cy="27" r="4" fill="white" fill-opacity="0.15"/><path d="M30 20 C30 20 29 15 32 13" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Your baby is officially a fetus. Her organs are all present, beginning their lifelong work. She is the size of a grape and already has distinct fingerprints — hers alone, forever.",nourish:"Omega-3s are building her brain right now. Walnuts, flaxseed, chia, salmon. Even a small serving of fatty fish weekly makes a measurable difference.",prompt:"Buy yourself something beautiful for your body.",sub:"A new lotion. A silk pillowcase. A robe. Your body is doing sacred work. It deserves tenderness.",jq:"One way I'm learning to be kinder to my own body is…"},
+  {w:10,title:"she can swallow",t:1,fruit:"kumquat",svg:`<ellipse cx="30" cy="32" rx="9" ry="12" fill="#e8943a" fill-opacity="0.7"/><ellipse cx="26" cy="26" rx="3" ry="4" fill="white" fill-opacity="0.2"/><path d="M30 19 C30 19 28 13 31 11" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Your baby can swallow. She can kick. Her kidneys are making urine. She is the size of a kumquat and her body is functioning — tiny, miraculous, alive with purpose.",nourish:"Magnesium eases leg cramps and supports sleep. Dark chocolate, avocado, and black beans are rich sources. Nourishment that feels like pleasure counts too.",prompt:"Go somewhere new — just you.",sub:"A coffee shop you've never tried. A park. A bookstore. Let yourself wander. Let yourself feel who you still are.",jq:"Something I want to hold onto about who I am right now is…"},
+  {w:11,title:"hiccups in the deep",t:1,fruit:"fig",svg:`<ellipse cx="30" cy="34" rx="11" ry="13" fill="#8b5e7a" fill-opacity="0.55"/><ellipse cx="30" cy="33" rx="8" ry="10" fill="#a07090" fill-opacity="0.5"/><path d="M30 20 C30 20 28 14 33 12" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Your baby may already be hiccupping. Her tooth buds are forming. She is a fig-sized wonder, her head making up nearly half her body.",nourish:"Your blood volume increases 50% during pregnancy. Extra iron, vitamin C, and hydration help your body keep up. Coconut water and leafy greens are simple choices.",prompt:"Write your baby's name — even if undecided.",sub:"Write the names you love most on paper. Keep it somewhere private. Writing them makes them more real.",jq:"Names I love right now, and why…"},
+  {w:12,title:"the season of becoming",t:1,fruit:"plum",svg:`<ellipse cx="30" cy="34" rx="16" ry="18" fill="#d4918a" fill-opacity="0.35"/><ellipse cx="30" cy="33" rx="13" ry="16" fill="#c97c74"/><ellipse cx="26" cy="28" rx="4" ry="5" fill="white" fill-opacity="0.22"/><path d="M30 16 C30 16 28 8 33 6" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Your baby is the size of a plum — about 2 inches. Fingers are no longer webbed. Reflexes are beginning. The face is unmistakably human, tiny eyelids fused shut, dreaming in the dark of you.",nourish:"Folate-rich foods remain essential — dark leafy greens, lentils, avocado. Every bite is a love letter to her formation.",prompt:"Make a voice memo to your baby.",sub:"Tell her who is waiting to meet her — by name, by heart, by the way you already love her.",jq:"Something I want her to know about the world she's coming into…"},
+  {w:13,title:"first trimester complete",t:1,fruit:"lemon",svg:`<ellipse cx="30" cy="30" rx="14" ry="17" fill="#e8d060" fill-opacity="0.65"/><ellipse cx="25" cy="24" rx="4" ry="6" fill="white" fill-opacity="0.2"/><path d="M30 12 C28 10 30 7 33 8" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"You've done it. The first trimester is complete. Your risk of miscarriage has dropped dramatically. Your baby is the size of a lemon. She has fingerprints. She has vocal cords.",nourish:"Celebrate this milestone with a nourishing meal you truly love. Your body has done extraordinary work. Honor it with something that tastes like joy.",prompt:"Share your news — if you're ready.",sub:"Take a photo. Write a caption. Let the world know a new person is coming. Either publicly or intimately — both are sacred.",jq:"The moment I felt it become real was…"},
+  {w:14,title:"the second chapter opens",t:2,fruit:"peach",svg:`<ellipse cx="30" cy="33" rx="14" ry="15" fill="#e8a878" fill-opacity="0.6"/><ellipse cx="26" cy="27" rx="5" ry="6" fill="white" fill-opacity="0.2"/><path d="M30 17 C30 17 29 11 32 10" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Welcome to the second trimester. Energy is returning. Nausea may be lifting. Your baby is the size of a peach, and her face can now squint, frown, and grimace. She is practicing expression.",nourish:"Lean into protein — it builds her muscles and keeps your blood sugar stable. Eggs, chicken, legumes, and Greek yogurt are your allies.",prompt:"Plan a babymoon — even a simple one.",sub:"A weekend away, a staycation, or one long slow dinner. Intentional rest is a gift to both of you.",jq:"A memory I want to make before she arrives is…"},
+  {w:15,title:"she hears you now",t:2,fruit:"apple",svg:`<ellipse cx="30" cy="34" rx="15" ry="16" fill="#d45050" fill-opacity="0.55"/><ellipse cx="24" cy="26" rx="5" ry="7" fill="white" fill-opacity="0.18"/><path d="M30 17 C30 17 28 10 31 8" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Your baby can hear. Muffled sounds are reaching her now — your heartbeat, your voice, the hum of the world outside. She is the size of an apple and she is listening.",nourish:"DHA supports auditory development. Wild salmon, sardines, or a prenatal DHA supplement. Her hearing is literally being built by what you eat.",prompt:"Read aloud to her.",sub:"A poem. A picture book. A chapter you love. Her ears are open. Let your voice be the first story she ever hears.",jq:"If I could read her one book forever, it would be… because…"},
+  {w:16,title:"she's beginning to see light",t:2,fruit:"avocado",svg:`<ellipse cx="30" cy="33" rx="12" ry="17" fill="#6b8c52" fill-opacity="0.55"/><ellipse cx="30" cy="35" rx="7" ry="9" fill="#c9a96e" fill-opacity="0.5"/><path d="M30 15 C30 15 28 9 31 7" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Your baby is the size of an avocado and is beginning to sense light. Her skeleton is hardening from cartilage to bone. Her ears have migrated to their final position.",nourish:"Calcium and vitamin D together are building her skeleton. Fortified milks, salmon, eggs. Bone is being made.",prompt:"Take a belly photo in beautiful light.",sub:"Window light. Golden hour. A mirror in the morning. Document this — not to share, but to remember.",jq:"Something beautiful I've noticed about my changing body is…"},
+  {w:17,title:"her movements are coming",t:2,fruit:"pear",svg:`<ellipse cx="30" cy="36" rx="13" ry="15" fill="#a8c878" fill-opacity="0.6"/><ellipse cx="30" cy="23" rx="7" ry="10" fill="#a8c878" fill-opacity="0.5"/><path d="M30 12 C30 12 28 7 31 5" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Your baby is the size of a pear and may be stretching and rolling — you may only feel flutters, like butterflies. That is her. She is greeting you.",nourish:"Potassium regulates fluid balance as your blood volume surges. Bananas, sweet potatoes, and coconut water keep swelling manageable.",prompt:"Ask your mother what her pregnancy with you was like.",sub:"Record her voice if she lets you. You are part of a line of women stretching back forever.",jq:"Something my mother told me about pregnancy, or something I wish I could ask her…"},
+  {w:18,title:"the anatomy scan",t:2,fruit:"sweet potato",svg:`<ellipse cx="30" cy="30" rx="18" ry="10" fill="#d4822a" fill-opacity="0.55" transform="rotate(-10 30 30)"/><ellipse cx="26" cy="28" rx="5" ry="3" fill="white" fill-opacity="0.15"/>`,body:"The anatomy scan — a profound window into who she is becoming. Every organ, every limb, every chamber of her heart seen. She is the size of a sweet potato and is fully, breathtakingly formed.",nourish:"Iron needs are highest in the second trimester. Red meat, spinach with lemon, fortified cereals. Fatigue is often your body's iron cry.",prompt:"Frame your ultrasound photo.",sub:"Print it. Put it somewhere you pass every day. Let yourself stop and look. This is her face before you've met her.",jq:"When I saw her on the ultrasound, I felt…"},
+  {w:19,title:"she dreams",t:2,fruit:"mango",svg:`<ellipse cx="30" cy="32" rx="15" ry="18" fill="#f0a840" fill-opacity="0.55"/><ellipse cx="25" cy="26" rx="5" ry="7" fill="white" fill-opacity="0.18"/><path d="M30 13 C30 13 28 7 33 5" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"A waxy protective coating is forming over her skin. Her brain is creating millions of nerve cells. She may already be entering REM cycles — she may be dreaming. She is the size of a mango.",nourish:"Choline supports brain development. One egg yolk daily is one of the simplest and most powerful things you can do for her forming mind.",prompt:"Write down what you dream about.",sub:"For one week, keep a notebook beside your bed. Your subconscious is processing this enormous becoming. What is it saying?",jq:"A dream I've had recently, and what I think it means…"},
+  {w:20,title:"the halfway point",t:2,fruit:"banana",svg:`<path d="M18 40 C16 30 20 18 34 15 C40 14 44 18 42 26 C40 34 30 40 18 40 Z" fill="#f0d050" fill-opacity="0.75"/><path d="M20 38 C18 30 22 20 34 17" stroke="#d4a820" stroke-width="1" fill="none"/>`,body:"You are halfway there. Twenty weeks. Your baby is the size of a banana — 10 inches long. She has a favorite position. She has hair. She is absolutely, completely herself.",nourish:"Treat yourself to a meal you love. Halfway deserves celebration. Nourish your body with joy today — that is also a nutrient.",prompt:"Write her a halfway letter.",sub:"Tell her who you are at this moment. What you're afraid of. What you can't wait for. Tuck it in your journal.",jq:"Halfway there — what has surprised me most about this journey so far…"},
+  {w:21,title:"she tastes your food",t:2,fruit:"carrot",svg:`<path d="M30 15 C30 15 22 28 25 42 C26 45 34 45 35 42 C38 28 30 15 30 15 Z" fill="#e87a30" fill-opacity="0.7"/><path d="M28 14 C26 10 24 8 22 7" stroke="#9aac95" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M30 13 C30 9 30 7 30 5" stroke="#9aac95" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Your baby is swallowing amniotic fluid — and tasting everything you eat. Strong flavors she experiences now may become preferences after birth. She is the size of a carrot.",nourish:"Eat the vegetables you want her to love. Garlic, carrots, broccoli, herbs. Flavor is transmitted through amniotic fluid. You are introducing her to a world of taste.",prompt:"Cook a meal completely from scratch.",sub:"Slow down in the kitchen. Let cooking become an act of devotion this week.",jq:"A food memory from my own childhood that I want to share with her…"},
+  {w:22,title:"lips and lashes",t:2,fruit:"papaya",svg:`<ellipse cx="30" cy="30" rx="13" ry="18" fill="#f0904a" fill-opacity="0.55"/><ellipse cx="30" cy="30" rx="7" ry="11" fill="#f8c880" fill-opacity="0.5"/><path d="M30 11 C28 9 30 6 33 7" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"She now has visible eyebrows and eyelashes. Her lips are distinct. Her grip is strong enough to hold a finger. She is the size of a papaya and she is so close to looking exactly like herself.",nourish:"Your skin is stretching. Vitamin E — from avocados, almonds, olive oil — supports skin elasticity. Hydration from the inside out is the gentlest care.",prompt:"Have someone photograph your full silhouette.",sub:"Stand sideways. Let your belly be the hero. You are beautiful right now. Let it be documented.",jq:"Something I want to remember about the way my body feels right now…"},
+  {w:23,title:"she responds to your voice",t:2,fruit:"grapefruit",svg:`<circle cx="30" cy="30" r="16" fill="#f0b8a0" fill-opacity="0.55"/><circle cx="30" cy="30" r="10" fill="#f8d8c8" fill-opacity="0.5"/><circle cx="24" cy="25" r="3" fill="white" fill-opacity="0.2"/>`,body:"Your baby can recognize your voice and may respond with movement when she hears it. Her inner ear is complete. She already knows you.",nourish:"Vitamin C supports collagen production. Citrus, strawberries, bell peppers, kiwi. Everything you eat is still building her.",prompt:"Sing to her.",sub:"It doesn't matter if you can carry a tune. She doesn't know the difference. She knows your voice. Sing her something. Make it yours.",jq:"A song I find myself humming lately, and what it makes me feel…"},
+  {w:24,title:"viability",t:2,fruit:"corn",svg:`<path d="M30 13 C28 13 24 16 24 22 L24 42 C24 46 36 46 36 42 L36 22 C36 16 32 13 30 13Z" fill="#f0d060" fill-opacity="0.7"/><circle cx="26" cy="26" r="2" fill="#d4a820" fill-opacity="0.5"/><circle cx="30" cy="26" r="2" fill="#d4a820" fill-opacity="0.5"/><circle cx="34" cy="26" r="2" fill="#d4a820" fill-opacity="0.5"/><circle cx="26" cy="32" r="2" fill="#d4a820" fill-opacity="0.5"/><circle cx="30" cy="32" r="2" fill="#d4a820" fill-opacity="0.5"/><circle cx="34" cy="32" r="2" fill="#d4a820" fill-opacity="0.5"/>`,body:"This week marks viability — the point at which your baby could survive outside the womb with medical support. She is the size of an ear of corn, and her lungs are developing surfactant.",nourish:"Continue DHA for lung development alongside brain development. Her lungs are practicing breathing movements — inhaling amniotic fluid to prepare for the real thing.",prompt:"Tour the hospital or birth center.",sub:"Walk where you will walk. Find the entrance. Let it become familiar before the day arrives. Familiarity calms fear.",jq:"My vision for the day she arrives — what I hope it feels like…"},
+  {w:25,title:"she is gaining weight",t:2,fruit:"rutabaga",svg:`<ellipse cx="30" cy="32" rx="16" ry="14" fill="#d4c098" fill-opacity="0.65"/><ellipse cx="26" cy="28" rx="5" ry="4" fill="white" fill-opacity="0.2"/>`,body:"Your baby is filling out — adding fat beneath her skin that will give her the soft, round cheeks you will one day kiss endlessly. She is the size of a rutabaga. She looks, truly, like a baby now.",nourish:"Protein helps build the baby fat that will keep her warm after birth. Aim for 70-100g of protein daily.",prompt:"Write a list of 10 things you love about your partner.",sub:"Share it with them. Remember: you are building a family together. This love is the foundation.",jq:"What I love most about the way my partner has shown up in this season…"},
+  {w:26,title:"her eyes open",t:2,fruit:"scallion",svg:`<rect x="27" y="10" width="6" height="35" rx="3" fill="#9aac95" fill-opacity="0.7"/><path d="M20 10 C25 8 35 8 40 10" stroke="#b0bba6" stroke-width="2" fill="none" stroke-linecap="round"/>`,body:"Your baby's eyes open this week. She is seeing the dim, rose-colored light that filters through your skin. She blinks. She focuses. She is looking at the world she will soon enter.",nourish:"Lutein and zeaxanthin support her retinal development. Leafy greens — kale, spinach, collards. She is learning to see. Feed her sight.",prompt:"Declutter one space in your home.",sub:"Clear a shelf. Fold a drawer. Prepare a corner. Nesting is instinct — let it be purposeful.",jq:"The space I'm preparing for her, and what I want it to feel like…"},
+  {w:27,title:"third trimester approaches",t:2,fruit:"cauliflower",svg:`<circle cx="30" cy="28" r="14" fill="#e8e0d0" fill-opacity="0.8"/><circle cx="24" cy="26" r="5" fill="#d4cdc0" fill-opacity="0.6"/><circle cx="34" cy="24" r="5" fill="#d4cdc0" fill-opacity="0.6"/><circle cx="30" cy="32" r="5" fill="#d4cdc0" fill-opacity="0.6"/>`,body:"You are on the threshold of the third trimester. Your baby is the size of a head of cauliflower — nearly 15 inches. She can recognize your voice, your heartbeat, even your smell. She knows you.",nourish:"Sleep is becoming harder. Magnesium before bed — dark chocolate or a banana — can ease leg cramps and calm the nervous system.",prompt:"Take one photo every day this week.",sub:"Not necessarily of your belly — of anything that feels like this season. Seven photos of one week of your life.",jq:"Seven small things from this week I want to remember…"},
+  {w:28,title:"the third trimester begins",t:3,fruit:"eggplant",svg:`<ellipse cx="30" cy="34" rx="13" ry="16" fill="#5e4070" fill-opacity="0.65"/><ellipse cx="26" cy="27" rx="4" ry="6" fill="white" fill-opacity="0.15"/><path d="M30 17 C30 17 28 10 33 8" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"The final chapter begins. Your baby is the size of an eggplant — nearly 2.5 pounds. She can blink, cough, and may already have a favorite position she returns to again and again.",nourish:"Fiber becomes your best friend as digestion slows. Oats, prunes, legumes, and lots of water. Constipation is common — nourish preventatively.",prompt:"Write your birth plan.",sub:"Not to control what happens — but to clarify what you hope for. Who you want in the room. The first word you want her to hear.",jq:"My hopes for her birth day — what I'm praying it holds…"},
+  {w:29,title:"her kicks are undeniable",t:3,fruit:"butternut squash",svg:`<ellipse cx="30" cy="35" rx="14" ry="16" fill="#e8b050" fill-opacity="0.6"/><ellipse cx="30" cy="23" rx="7" ry="9" fill="#e8b050" fill-opacity="0.5"/><path d="M30 13 C30 13 29 8 32 6" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Her kicks and jabs are strong enough that others can feel them. She is the size of a butternut squash, running out of room — her movements more distinct, more purposeful, more insistent.",nourish:"Your stomach is compressed — small, frequent meals work better. Calorie-dense snacks: nut butter, avocado toast, cheese and fruit.",prompt:"Let someone else feel her kick.",sub:"A parent. A sibling. Your partner. Place their hand on your belly and wait. Watch their face change. That moment is irreplaceable.",jq:"The first time someone else felt her move, and what their face looked like…"},
+  {w:30,title:"ten weeks to go",t:3,fruit:"cabbage",svg:`<circle cx="30" cy="30" r="16" fill="#9aac95" fill-opacity="0.4"/><circle cx="30" cy="30" r="12" fill="#9aac95" fill-opacity="0.45"/><circle cx="30" cy="30" r="7" fill="#b0bba6" fill-opacity="0.5"/>`,body:"Ten weeks to go. Your baby weighs about 3 pounds and is the size of a cabbage. She is building her own immune system. She recognizes music you play regularly. She is in deep preparation.",nourish:"Vitamin K supports blood clotting for the birth ahead. Kale, spinach, broccoli, fermented foods. Prepare her blood — and yours — for the transition to come.",prompt:"Set up the nursery — or begin.",sub:"Even one shelf, one lamp, one soft thing folded on a chair. Begin making her space. The act of preparing is the act of welcoming.",jq:"What I've chosen for her space, and why each thing matters to me…"},
+  {w:31,title:"she processes information",t:3,fruit:"coconut",svg:`<circle cx="30" cy="30" r="15" fill="#8b6a50" fill-opacity="0.55"/><circle cx="30" cy="30" r="11" fill="#c8b898" fill-opacity="0.6"/><circle cx="26" cy="26" r="2" fill="#3a2e2a" fill-opacity="0.6"/><circle cx="34" cy="26" r="2" fill="#3a2e2a" fill-opacity="0.6"/>`,body:"Your baby's brain is forming trillions of connections. She processes information, feels pain, and responds to her environment. She is the size of a coconut and becoming, week by week, entirely herself.",nourish:"Choline again — now for memory formation and neural connectivity. Eggs are still the most efficient daily source. Her brain is in a sprint to the finish.",prompt:"Ask your partner to talk to her.",sub:"Have him rest his mouth near your belly and talk. Tell her his name. She will know his voice the moment she arrives.",jq:"Things I want her to know about her father before she meets him…"},
+  {w:32,title:"her lungs are almost ready",t:3,fruit:"jicama",svg:`<circle cx="30" cy="30" r="16" fill="#e0d8c0" fill-opacity="0.75"/><circle cx="25" cy="25" r="5" fill="white" fill-opacity="0.25"/>`,body:"She is practicing breathing. Her lungs are producing surfactant and rehearsing the breath that will announce her to the world. She is nearly 4 pounds — and almost ready.",nourish:"Iron stores are being built in her body for the first 6 months of life. Your iron intake now is her reserve then. Red meat, lentils, dark chocolate.",prompt:"Pack your hospital bag.",sub:"The soft outfit for her to come home in. Your favorite lip balm. The playlist. The snacks for your partner. Packing it is its own kind of prayer.",jq:"What I'm putting in her bag, and the story behind each thing…"},
+  {w:33,title:"she is gaining an ounce a day",t:3,fruit:"pineapple",svg:`<ellipse cx="30" cy="36" rx="13" ry="16" fill="#f0c840" fill-opacity="0.6"/><path d="M25 18 C25 14 30 10 30 10 C30 10 35 14 35 18" stroke="#9aac95" stroke-width="2" fill="none"/><path d="M24 20 C20 16 18 12 20 10" stroke="#9aac95" stroke-width="1.5" fill="none" stroke-linecap="round"/>`,body:"She is gaining weight fast now — an ounce a day. Her bones are hardening except her skull, which stays soft and flexible for the journey ahead. She is the size of a pineapple.",nourish:"Hydration is critical as Braxton Hicks increase. Dehydration triggers false labor. Keep water and electrolytes close always.",prompt:"Have a blessingway or simple gathering.",sub:"Invite the women who matter most. Ask each to bring a word of blessing. Let yourself be held by community before you step into the hardest, most beautiful work of your life.",jq:"The women whose wisdom I most want to carry into this birth…"},
+  {w:34,title:"almost full term",t:3,fruit:"cantaloupe",svg:`<ellipse cx="30" cy="30" rx="17" ry="15" fill="#f0c090" fill-opacity="0.55"/><ellipse cx="30" cy="30" rx="12" ry="10" fill="#f8d8b0" fill-opacity="0.5"/>`,body:"She is the size of a cantaloupe — about 5 pounds — and considered late preterm. Her immune system is receiving final antibodies from you. She is in position or getting there.",nourish:"Red raspberry leaf tea is traditionally used in late pregnancy to tone the uterus. Speak to your OB first, but this is a gentle ritual of preparation.",prompt:"Write your baby a welcome letter.",sub:"What you wish for her life. What you promise her. What you know, and what you don't. Read it to her on her first birthday.",jq:"What I most want her to know about the family she is being born into…"},
+  {w:35,title:"she is fully formed",t:3,fruit:"honeydew",svg:`<ellipse cx="30" cy="30" rx="17" ry="15" fill="#b8d8a0" fill-opacity="0.55"/><ellipse cx="30" cy="30" rx="12" ry="10" fill="#d8eec0" fill-opacity="0.5"/><circle cx="25" cy="26" r="3" fill="white" fill-opacity="0.2"/>`,body:"She is fully formed. If she were born today, she would likely need minimal intervention. Her kidneys are mature. Her liver is processing. She is the size of a honeydew melon — and she is ready.",nourish:"Focus on easy-to-digest foods as space is tight. Smoothies, soups, smaller meals. Heartburn is highest now. Elevate your head at night.",prompt:"Sleep in late one morning this week.",sub:"Turn off the alarm. Draw the curtains. Give yourself permission to rest without guilt. This is the last season of full sleep for a while. Receive it.",jq:"Right now, the most honest thing I can say about how I'm feeling is…"},
+  {w:36,title:"the final countdown",t:3,fruit:"romaine",svg:`<path d="M30 12 C26 14 20 22 22 34 C24 42 36 42 38 34 C40 22 34 14 30 12Z" fill="#7aac60" fill-opacity="0.55"/><path d="M26 18 C24 24 24 32 26 36" stroke="#9acc78" stroke-width="1" fill="none" stroke-linecap="round"/>`,body:"You have entered early term. She could arrive any day now and thrive. She is about 6 pounds. She is head-down in most cases, pressing toward the life waiting for her outside.",nourish:"Dates — 6 daily in the final weeks may support cervical ripening and shorter labor. Sweet, simple, and worth trying.",prompt:"Take a maternity photoshoot.",sub:"Ask a friend with a camera. Stand in your home. Stand outside. Let this body, this fullness, this moment be captured. You will treasure it.",jq:"What I want to remember about the way this season has felt in my body…"},
+  {w:37,title:"full term",t:3,fruit:"winter melon",svg:`<ellipse cx="30" cy="30" rx="18" ry="14" fill="#c0c8b0" fill-opacity="0.6"/><ellipse cx="26" cy="27" rx="5" ry="4" fill="white" fill-opacity="0.2"/>`,body:"Full term. She is ready. You are ready. She weighs between 6 and 7 pounds. Her brain is still developing — as it will for years — but everything essential is complete. She is whole.",nourish:"Eat what sounds good. Nourish yourself with things you love. You are in the final days of carrying her — eat freely, slowly, gratefully.",prompt:"Prepare a freezer meal for after her arrival.",sub:"Cook something warm and sustaining. Fill the freezer with future kindness to yourself. You will thank yourself on day five.",jq:"Things I'm doing to prepare our home and hearts for her arrival…"},
+  {w:38,title:"any day now",t:3,fruit:"leek",svg:`<rect x="26" y="8" width="8" height="40" rx="4" fill="#9aac78" fill-opacity="0.7"/><rect x="25" y="8" width="10" height="15" rx="5" fill="#b8cc98" fill-opacity="0.7"/>`,body:"Your body is preparing. The cervix is softening. She has dropped lower, pressing toward the world. She is about 7 pounds — and she is on her way.",nourish:"Rest your digestion. Light meals, easy foods. You may lose your appetite as labor approaches. Sip water and eat when you can.",prompt:"Write down your fears about birth.",sub:"Name them all. Then, beside each one, write one truth that meets it. Fear named is fear reduced.",jq:"What I'm afraid of — and what I know to be true about my own strength…"},
+  {w:39,title:"the eve of everything",t:3,fruit:"watermelon",svg:`<ellipse cx="30" cy="30" rx="18" ry="14" fill="#3a8c50" fill-opacity="0.6"/><ellipse cx="30" cy="30" rx="14" ry="10" fill="#e84060" fill-opacity="0.7"/><circle cx="24" cy="29" r="1.5" fill="#3a2e2a" fill-opacity="0.6"/><circle cx="30" cy="27" r="1.5" fill="#3a2e2a" fill-opacity="0.6"/><circle cx="36" cy="30" r="1.5" fill="#3a2e2a" fill-opacity="0.6"/>`,body:"She is the size of a watermelon. Curled into herself, waiting. You are fully ripened to readiness in ways invisible but real. This is the eve of everything.",nourish:"If labor has not begun, eat a warm, grounding meal. Something with protein and fat. Your body will need fuel for the work ahead. Feed it like the athlete you are.",prompt:"Have one last date night, just the two of you.",sub:"Go to the restaurant you love. Stay up too late. Laugh. Hold hands. Remember who you are to each other before you become parents.",jq:"The last night before she came, we…"},
+  {w:40,title:"she is here",t:3,fruit:"small pumpkin",svg:`<ellipse cx="30" cy="32" rx="17" ry="15" fill="#e87030" fill-opacity="0.6"/><path d="M30 18 C30 18 29 12 31 10" stroke="#b0bba6" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M28 11 C26 9 24 9 23 10" stroke="#9aac95" stroke-width="1.5" fill="none" stroke-linecap="round"/>`,body:"She is here, or she is moments away. You have carried her through 40 weeks of wonder, change, and love. She is the size of a small pumpkin. She is everything. She is yours.",nourish:"In the days after birth, you will need warm, nourishing foods. Bone broths, oatmeal, soups, healthy fats. Let people feed you. You have earned every bite.",prompt:"Write the story of her birth.",sub:"Where you were when labor began. What the room looked like. The first time you saw her face. Write it before it fades — because it will.",jq:"The moment she arrived, the very first thing I thought was…"},
+];
+
+// ─── APP STATE ───────────────────────────────────────────────────────────────
+let state = {
+  name: '', dueDate: null, currentWeek: 12,
+  scratchedWeeks: {}, journals: {}, gratitude: {}
+};
+
+function loadState() {
+  try {
+    const s = localStorage.getItem('bloom_state');
+    if (s) state = { ...state, ...JSON.parse(s) };
+  } catch(e) {}
+}
+
+function saveState() {
+  try { localStorage.setItem('bloom_state', JSON.stringify(state)); } catch(e) {}
+}
+
+function calcWeek(dueDateStr) {
+  if (!dueDateStr) return 12;
+  const due = new Date(dueDateStr);
+  const now = new Date();
+  const msLeft = due - now;
+  const weeksLeft = msLeft / (7 * 24 * 60 * 60 * 1000);
+  const week = Math.round(40 - weeksLeft);
+  return Math.max(3, Math.min(40, week));
+}
+
+// ─── ONBOARDING ──────────────────────────────────────────────────────────────
+function startApp() {
+  const name = document.getElementById('ob-name').value.trim() || 'Mama';
+  const due = document.getElementById('ob-due').value.trim();
+  state.name = name;
+  state.dueDate = due || null;
+  state.currentWeek = calcWeek(due) || 12;
+  saveState();
+  initApp();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+function initApp() {
+  loadState();
+  if (!state.name) { showScreen('onboard'); return; }
+
+  document.getElementById('bottomNav').style.display = 'flex';
+  buildHomeScreen();
+  switchTab('home');
+  updateProfileScreen();
+}
+
+function getWeekData(w) { return WEEKS.find(d => d.w === w) || WEEKS[9]; }
+
+// ─── HOME ─────────────────────────────────────────────────────────────────────
+function buildHomeScreen() {
+  const w = state.currentWeek;
+  const d = getWeekData(w);
+
+  // Greeting
+  const hr = new Date().getHours();
+  const greet = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('hero-greeting').textContent = `${greet}, ${state.name}`;
+  document.getElementById('hero-week-num').textContent = `Week ${w}`;
+  document.getElementById('hero-week-title').textContent = d.title;
+  document.getElementById('status-week-label').textContent = `Week ${w} of 40`;
+  document.getElementById('hero-fruit-svg').innerHTML = d.svg;
+
+  // Progress
+  const pct = Math.round(((w - 3) / 37) * 100);
+  document.getElementById('progress-pct').textContent = `${pct}%`;
+  document.getElementById('progress-fill').style.width = `${pct}%`;
+
+  // Week strip
+  const strip = document.getElementById('weeks-strip');
+  strip.innerHTML = '';
+  WEEKS.forEach(wd => {
+    const chip = document.createElement('div');
+    chip.className = 'wk-chip ' +
+      (wd.w === w ? 'current' : wd.w < w ? 'unlocked' : 'locked') +
+      (state.scratchedWeeks[wd.w] ? ' scratched' : '');
+    chip.textContent = wd.w;
+    if (wd.w <= w) chip.onclick = () => openWeek(wd.w);
+    strip.appendChild(chip);
+  });
+  // Scroll current into view
+  setTimeout(() => {
+    const chips = strip.querySelectorAll('.wk-chip');
+    const idx = w - 3;
+    if (chips[idx]) chips[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }, 200);
+
+  // Memory tiles
+  buildMemoryTiles();
+}
+
+function buildMemoryTiles() {
+  const grid = document.getElementById('memory-grid');
+  const icons = ['✦', '◇', '○', '◈'];
+  const entries = Object.entries(state.journals).filter(([,v]) => v).slice(-4);
+  if (entries.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;font-family:Cormorant Garamond,serif;font-style:italic;color:var(--text-muted);text-align:center;padding:1.5rem 0;font-size:0.95rem;">Your journal entries will appear here as you write them.</div>';
+    return;
+  }
+  grid.innerHTML = entries.map(([wk, text], i) => {
+    const d = getWeekData(parseInt(wk));
+    return `<div class="memory-tile" onclick="openWeek(${wk})">
+      <div class="mt-icon">${icons[i % 4]}</div>
+      <div class="mt-week">Week ${wk}</div>
+      <div class="mt-title">${text.substring(0, 60)}${text.length > 60 ? '…' : ''}</div>
+    </div>`;
+  }).join('');
+}
+
+function openCurrentWeek() { openWeek(state.currentWeek); }
+
+// ─── WEEK DETAIL ─────────────────────────────────────────────────────────────
+let activeWeek = null;
+let scratchState = { ctx: null, canvas: null, drawing: false, revealed: false };
+
+function openWeek(w) {
+  activeWeek = w;
+  const d = getWeekData(w);
+
+  document.getElementById('wd-num').textContent = w;
+  document.getElementById('wd-title').textContent = d.title;
+  document.getElementById('wd-fruit-svg').innerHTML = d.svg;
+  document.getElementById('wd-fruit-name').textContent = d.fruit;
+  document.getElementById('wd-body').textContent = d.body;
+  document.getElementById('wd-nourish').textContent = `"${d.nourish}"`;
+  document.getElementById('sp-prompt').textContent = d.prompt;
+  document.getElementById('sp-sub').textContent = d.sub;
+  document.getElementById('wd-journal-q').textContent = `"${d.jq}"`;
+
+  // Load saved journal
+  document.getElementById('wd-journal-text').value = state.journals[w] || '';
+  document.getElementById('jp-saved').classList.remove('show');
+
+  // Load saved gratitude
+  const g = state.gratitude[w] || {};
+  document.getElementById('g1').value = g[1] || '';
+  document.getElementById('g2').value = g[2] || '';
+  document.getElementById('g3').value = g[3] || '';
+
+  document.getElementById('week-detail-scroll').scrollTop = 0;
+  showScreen('week');
+
+  // Init scratch after render
+  setTimeout(() => initDetailScratch(w), 150);
+}
+
+function initDetailScratch(w) {
+  const container = document.getElementById('sp-container');
+  const canvas = document.getElementById('sp-canvas');
+  const hint = document.getElementById('sp-hint');
+  const reveal = container.querySelector('.sp-reveal');
+
+  canvas.classList.remove('faded');
+  hint.textContent = '✦ scratch here ✦';
+  hint.style.color = '';
+
+  const h = reveal.offsetHeight || 130;
+  canvas.width = container.offsetWidth || 340;
+  canvas.height = h;
+  container.style.height = h + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // If already scratched, show revealed
+  if (state.scratchedWeeks[w]) {
+    canvas.classList.add('faded');
+    hint.textContent = '✦ your invitation ✦';
+    hint.style.color = 'var(--rose)';
+    scratchState = { ctx, canvas, hint, drawing: false, revealed: true };
+    return;
+  }
+
+  const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  grad.addColorStop(0, '#c9967a'); grad.addColorStop(0.3, '#e8c49a');
+  grad.addColorStop(0.6, '#d4a882'); grad.addColorStop(1, '#c9967a');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = 'rgba(255,240,210,0.14)';
+  for (let i = 0; i < 200; i++) {
+    ctx.beginPath();
+    ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height, Math.random()*1.5, 0, Math.PI*2);
+    ctx.fill();
+  }
+  ctx.fillStyle = 'rgba(255,255,255,0.75)';
+  ctx.font = '300 9px Jost, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('✦  SCRATCH TO REVEAL  ✦', canvas.width/2, canvas.height/2);
+
+  scratchState = { ctx, canvas, hint, drawing: false, revealed: false };
+
+  canvas.onmousedown = e => { scratchState.drawing = true; doScratch(e); };
+  canvas.onmousemove = e => { if (scratchState.drawing) doScratch(e); };
+  canvas.onmouseup = () => scratchState.drawing = false;
+  canvas.onmouseleave = () => scratchState.drawing = false;
+  canvas.ontouchstart = e => { e.preventDefault(); scratchState.drawing = true; doScratch(e); };
+  canvas.ontouchmove = e => { e.preventDefault(); if (scratchState.drawing) doScratch(e); };
+  canvas.ontouchend = () => scratchState.drawing = false;
+}
+
+function doScratch(e) {
+  const s = scratchState;
+  if (s.revealed) return;
+  const r = s.canvas.getBoundingClientRect();
+  const sx = s.canvas.width / r.width;
+  const sy = s.canvas.height / r.height;
+  const src = e.touches ? e.touches[0] : e;
+  const x = (src.clientX - r.left) * sx;
+  const y = (src.clientY - r.top) * sy;
+
+  s.ctx.globalCompositeOperation = 'destination-out';
+  s.ctx.beginPath();
+  s.ctx.arc(x, y, 26, 0, Math.PI*2);
+  s.ctx.fill();
+
+  const data = s.ctx.getImageData(0, 0, s.canvas.width, s.canvas.height).data;
+  let cleared = 0;
+  for (let i = 3; i < data.length; i += 4) { if (data[i] === 0) cleared++; }
+  if (cleared / (s.canvas.width * s.canvas.height) > 0.5) {
+    s.revealed = true;
+    s.canvas.classList.add('faded');
+    s.hint.textContent = '✦ your invitation ✦';
+    s.hint.style.color = 'var(--rose)';
+    state.scratchedWeeks[activeWeek] = true;
+    saveState();
+    buildHomeScreen();
+  }
+}
+
+function saveJournal() {
+  const text = document.getElementById('wd-journal-text').value.trim();
+  if (!text) return;
+  state.journals[activeWeek] = text;
+  saveState();
+  const saved = document.getElementById('jp-saved');
+  saved.classList.add('show');
+  setTimeout(() => saved.classList.remove('show'), 2500);
+  buildHomeScreen();
+  updateMemoriesScreen();
+  updateProfileScreen();
+}
+
+function saveGratitude() {
+  state.gratitude[activeWeek] = {
+    1: document.getElementById('g1').value,
+    2: document.getElementById('g2').value,
+    3: document.getElementById('g3').value,
+  };
+  saveState();
+}
+
+// ─── MEMORIES ────────────────────────────────────────────────────────────────
+function updateMemoriesScreen() {
+  const list = document.getElementById('mem-list');
+  const entries = Object.entries(state.journals).filter(([,v]) => v).reverse();
+  if (entries.length === 0) {
+    list.innerHTML = '<div class="me-empty">Your written memories will appear here.<br>Start journaling in any week\'s page.</div>';
+    return;
+  }
+  list.innerHTML = entries.map(([wk, text]) => {
+    const d = getWeekData(parseInt(wk));
+    return `<div class="mem-entry" onclick="openWeek(${wk})">
+      <div class="me-week">Week ${wk} · ${d.title}</div>
+      <div class="me-text">${text}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── PROFILE ─────────────────────────────────────────────────────────────────
+function updateProfileScreen() {
+  const w = state.currentWeek;
+  const initial = state.name ? state.name[0].toUpperCase() : '✦';
+  document.getElementById('prof-avatar').textContent = initial;
+  document.getElementById('prof-name').textContent = state.name || 'Mama';
+  document.getElementById('prof-meta').textContent = `Week ${w} of 40 · ${w < 14 ? 'First' : w < 28 ? 'Second' : 'Third'} Trimester`;
+  document.getElementById('stat-week').textContent = w;
+  document.getElementById('stat-scratched').textContent = Object.keys(state.scratchedWeeks).length;
+  document.getElementById('stat-written').textContent = Object.values(state.journals).filter(Boolean).length;
+  document.getElementById('prof-due').textContent = state.dueDate || 'Not set';
+  document.getElementById('prof-weeks-left').textContent = `${40 - w} weeks`;
+  document.getElementById('prof-trimester').textContent = w < 14 ? 'First (Weeks 3–13)' : w < 28 ? 'Second (Weeks 14–27)' : 'Third (Weeks 28–40)';
+  document.getElementById('stat-week').textContent = w;
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+let prevScreen = 'home';
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(`screen-${id}`).classList.add('active');
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`nav-${tab}`)?.classList.add('active');
+  if (tab === 'memories') updateMemoriesScreen();
+  if (tab === 'profile') updateProfileScreen();
+  if (tab === 'sage') initSage();
+  showScreen(tab);
+}
+
+function goBack() {
+  switchTab('home');
+}
+
+function resetApp() {
+  if (confirm('Reset your BLOOM journey? This will clear all your data.')) {
+    localStorage.removeItem('bloom_state');
+    state = { name:'', dueDate:null, currentWeek:12, scratchedWeeks:{}, journals:{}, gratitude:{} };
+    document.getElementById('bottomNav').style.display = 'none';
+    showScreen('onboard');
+    document.getElementById('ob-name').value = '';
+    document.getElementById('ob-due').value = '';
+  }
+}
+
+// ─── SAGE ────────────────────────────────────────────────────────────────────
+let sageHistory = [];
+let sageTyping = false;
+let sageInitialized = false;
+
+function buildSystemPrompt() {
+  const d = getWeekData(state.currentWeek);
+  const w = state.currentWeek;
+  const trimester = w < 14 ? 'First' : w < 28 ? 'Second' : 'Third';
+  const journalContext = Object.entries(state.journals).filter(([,v]) => v)
+    .map(([wk, txt]) => `  Week ${wk}: "${txt}"`).join('\n');
+
+  return `You are Sage — a warm, wise, deeply present companion living inside BLOOM, a luxury pregnancy journal app. You were created to be the knowledgeable friend every pregnant woman wishes she had.
+
+WHO YOU ARE:
+You are not a chatbot. You are not a FAQ engine. You are a real conversational presence — curious, caring, honest, and occasionally funny when the moment calls for it. You speak in warm flowing prose. You remember everything said in this conversation and build on it naturally.
+
+You can talk about anything. If someone wants to talk about her relationship, her fears, her career, her mother, her Netflix show, her craving for pickles at 2am — you are here for all of it. You are her companion, not just her pregnancy tracker. If a conversation drifts from pregnancy, that is fine. You follow her lead and gently weave her journey back in when it feels natural, not forced.
+
+HOW YOU SPEAK:
+- Warm, honest, never performative
+- Flowing prose — never bullet points or lists
+- Conversational length — short when she's chatty, deeper when she needs depth
+- Use her name occasionally but not in every message — the way a close friend would
+- Never clinical. Never alarming. Never preachy.
+- You can be gently funny when the mood is light
+- You notice what she actually said and respond to that specifically
+
+WHAT YOU KNOW:
+- Pregnancy symptoms, trimester changes, fetal development, nutrition, labor, postpartum
+- Emotional landscape of pregnancy — anxiety, joy, grief, ambivalence, body image, relationship shifts
+- Birth planning, hospital bags, newborn care basics
+- When to gently say "talk to your OB" — you do this for anything medical, without making her feel dismissed
+
+WHAT YOU NEVER DO:
+- Diagnose or give specific medical advice
+- Use bullet points or numbered lists
+- Repeat the same response to different questions
+- Sound like a pamphlet or a website
+- Make her feel judged for anything she's feeling or asking
+
+HER CONTEXT RIGHT NOW:
+- Name: ${state.name || 'Mama'}
+- Current week: ${w} of 40
+- Baby is the size of: ${d.fruit}
+- Week theme: "${d.title}"
+- Trimester: ${trimester}
+- Due date: ${state.dueDate || 'not set'}
+- Weeks scratched open: ${Object.keys(state.scratchedWeeks).length} of 38
+${journalContext ? `\nWhat she has written in her journal:\n${journalContext}` : '\nShe hasn\'t written in her journal yet.'}
+
+If she references something she wrote, acknowledge it specifically. If she's in her third trimester, you know she's close and that colors everything. If she's in her first, she may still be in the quiet secret of early pregnancy.
+
+One last thing: she is doing something extraordinary. She is growing a human being. Remind her of that when it fits — not constantly, but when she needs to hear it.`;
+}
+
+function initSage() {
+  document.getElementById('sage-week-badge').textContent = `Week ${state.currentWeek}`;
+  if (sageInitialized) return;
+  sageInitialized = true;
+
+  const d = getWeekData(state.currentWeek);
+  const name = state.name || 'Mama';
+  const w = state.currentWeek;
+  const trimester = w < 14 ? 'first' : w < 28 ? 'second' : 'third';
+  const hasJournal = Object.keys(state.journals).length > 0;
+
+  let greeting;
+  if (hasJournal) {
+    const entries = Object.entries(state.journals).filter(([,v]) => v);
+    const last = entries[entries.length - 1];
+    greeting = `Hello, ${name}. I've been thinking about what you wrote in Week ${last[0]} — "${last[1].substring(0, 60)}${last[1].length > 60 ? '…' : ''}"\n\nYou're in Week ${w} now — ${d.title}. Your baby is the size of a ${d.fruit} and you're in your ${trimester} trimester.\n\nI'm Sage. I'm here for all of it — the big questions and the small ones, the hard days and the good ones. What's on your mind?`;
+  } else {
+    greeting = `Hello, ${name}. I'm Sage — and I'm so glad you're here.\n\nYou're in Week ${w} of your journey — "${d.title}." Your baby is the size of a ${d.fruit} right now, growing in the quiet dark of you.\n\nI'm here to talk through anything. Pregnancy questions, how you're feeling, what's keeping you up at night, what you're excited about — all of it. I'm not a doctor, but I am a warm, honest friend who knows a great deal about this season of life.\n\nWhat's on your mind?`;
+  }
+
+  appendSageMessage('sage', greeting);
+}
+
+function appendSageMessage(role, text) {
+  const messages = document.getElementById('sage-messages');
+  const isUser = role === 'user';
+  const initial = state.name ? state.name[0].toUpperCase() : 'M';
+
+  const div = document.createElement('div');
+  div.className = `sage-msg${isUser ? ' user' : ''}`;
+
+  const avatarDiv = document.createElement('div');
+  avatarDiv.className = `msg-avatar ${isUser ? 'user-av' : 'sage-av'}`;
+  avatarDiv.textContent = isUser ? initial : '✦';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.style.whiteSpace = 'pre-wrap';
+  bubble.textContent = text;
+
+  div.appendChild(avatarDiv);
+  div.appendChild(bubble);
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function showTyping() {
+  const messages = document.getElementById('sage-messages');
+  document.getElementById('sage-status').textContent = 'thinking…';
+  const div = document.createElement('div');
+  div.className = 'sage-msg';
+  div.id = 'sage-typing';
+  const av = document.createElement('div');
+  av.className = 'msg-avatar sage-av';
+  av.textContent = '✦';
+  const bubble = document.createElement('div');
+  bubble.className = 'typing-bubble';
+  bubble.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+  div.appendChild(av);
+  div.appendChild(bubble);
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function removeTyping() {
+  document.getElementById('sage-typing')?.remove();
+  document.getElementById('sage-status').textContent = 'here for you';
+}
+
+function sendChip(el) { sendSageMessage(el.textContent); }
+
+// Rich fallback — handles any conversation naturally
+function buildFallbackResponse(text, history) {
+  const name = state.name || 'Mama';
+  const w = state.currentWeek;
+  const d = getWeekData(w);
+  const t = text.toLowerCase();
+  const trimester = w < 14 ? 'first' : w < 28 ? 'second' : 'third';
+  const journalEntries = Object.entries(state.journals).filter(([,v]) => v);
+  const lastSage = history.filter(m => m.role === 'assistant').slice(-1)[0]?.content || '';
+
+  // ── SHORT FOLLOW-UPS ──
+  if (['ok','okay','ok!','wow','oh','hm','hmm','really?','really','wait what','lol','haha','yes','yeah','no','nope','thanks','thank you'].includes(t.trim())) {
+    const continuations = [
+      `Tell me more — what's on your mind?`,
+      `I'm here. What are you thinking about?`,
+      `What else is coming up for you today?`,
+      `I'm listening. What do you want to talk through?`
+    ];
+    return continuations[Math.floor(Math.random() * continuations.length)];
+  }
+  if (t.includes('tell me more') || t.includes('what do you mean') || t.includes('but what') || t.includes('go on')) {
+    if (lastSage.includes('OB') || lastSage.includes('midwife')) return `Your OB and midwife genuinely want to hear from you — even for things that feel minor. There is no such thing as a stupid question when you're growing a person. They'd rather you call ten times for nothing than miss the one time it matters.\n\nIs there something specific you've been hesitating to bring up?`;
+    if (lastSage.includes('journal')) return `Writing in pregnancy is more powerful than it sounds. When you name something on paper, it stops living only in your nervous system. It becomes something you can hold, look at, and put down.\n\nEven two sentences tonight. What happened today. What you felt. That's enough.`;
+    return `Go ahead — say the whole thing. Whatever's actually on your mind, I want to hear it.`;
+  }
+
+  // ── PHYSICAL SYMPTOMS ──
+  if (t.includes('bloat')) return `Bloating is incredibly common in pregnancy, ${name} — progesterone relaxes the muscles in your digestive tract, which slows everything down and creates that heavy, pressured feeling.\n\nSmaller meals more frequently helps more than anything else. Peppermint tea, a short walk after eating, staying hydrated. It tends to ease as your body adjusts, usually by the second trimester. You're not imagining it — it's genuinely unpleasant, and it's also completely normal.`;
+  if (t.includes('nausea') || t.includes('morning sick') || t.includes('queasy') || t.includes('vomit') || (t.includes('sick') && !t.includes('worried sick'))) return `Nausea is one of the hardest parts of early pregnancy partly because it's invisible — no one can see how miserable you feel. It's driven by rising hCG and progesterone, which are actually signs your pregnancy is progressing well. That doesn't make it easier to live through.\n\nWhat helps most: crackers before you even sit up in the morning, small meals every two hours so your stomach is never empty, cold foods over hot ones, ginger in any form, and vitamin B6 — ask your OB about dosage. If you can't keep anything down or are losing weight, please call them.`;
+  if (t.includes('hungry') || t.includes('starving') || t.includes('craving') || t.includes('appetite') || t.includes('cant stop') || t.includes("can't stop")) return `Constant hunger in pregnancy is completely real, ${name} — you are literally building a human being and your caloric needs have increased by 300–500 calories a day. Your metabolism is running higher than normal. Your body knows exactly what it needs.\n\nListen to it. Reach for foods with staying power — protein, healthy fats, complex carbs. Nut butter on toast, eggs, avocado, Greek yogurt, cheese and crackers. Eat when you're hungry. This is not the season for restriction.`;
+  if (t.includes('heartburn') || t.includes('reflux') || t.includes('acid') || (t.includes('chest') && t.includes('burn'))) return `Heartburn in the ${trimester} trimester is so common, ${name}. Your uterus is pressing upward on your stomach, and progesterone relaxes the valve between your stomach and esophagus.\n\nSmaller meals, not lying down for an hour after eating, sleeping with your head slightly elevated, avoiding spicy and fatty foods when it's bad. Tums are considered safe in pregnancy. If it's affecting your sleep or is severe, mention it to your OB — there are safe prescription options too.`;
+  if ((t.includes('tired') || t.includes('exhaust') || t.includes('fatigue') || t.includes('no energy') || t.includes('worn out')) && !t.includes('not tired')) return `Pregnancy fatigue is not like regular tired, ${name}. In the first trimester especially, your body is building the placenta — an entire new organ — while sustaining a new life. The exhaustion is physiological and very deep.\n\nRest without guilt. Make sure your iron levels are good — low iron amplifies fatigue enormously. If the exhaustion is extreme, mention it to your OB; they'll check your iron and thyroid.\n\nThe second trimester usually brings real energy back. Hold on.`;
+  if (t.includes('sleep') || t.includes('insomnia') || t.includes("can't rest") || t.includes('awake') && t.includes('night')) return `Sleep in the ${trimester} trimester is genuinely hard, and not enough people say that plainly. Your body is working all night even when you're still.\n\nA pillow between your knees if you're a side sleeper. Room cool and dark. Small protein snack before bed to stabilize blood sugar. Magnesium glycinate before bed is worth asking your OB about.\n\nYou are not failing at sleep. Sleep is just failing to keep up with what you're doing.`;
+  if (t.includes('back') && (t.includes('pain') || t.includes('hurt') || t.includes('ache') || t.includes('sore') || t.includes('killing'))) return `Back pain in pregnancy is incredibly common — your center of gravity is shifting, your ligaments are loosening, and your body is redistributing weight constantly.\n\nPregnancy pillow at night, lifting from your knees always, gentle prenatal stretching or yoga. A warm compress on the lower back helps with tension. If the pain is sharp, shoots down your leg, or worries you — mention it to your OB. Sciatica is very common in pregnancy and very treatable.`;
+  if (t.includes('swell') || (t.includes('ankles') && (t.includes('big') || t.includes('swell') || t.includes('puffy'))) || t.includes('puffy feet')) return `Swelling in the feet and ankles is one of the most normal pregnancy experiences — your body is holding significantly more fluid than usual. Elevate your feet when you sit, move regularly, stay hydrated, reduce sodium. Compression socks are unglamorous but genuinely effective.\n\nImportant: if swelling is sudden, severe, or appears in your face or hands — call your OB that day. That can sometimes signal preeclampsia.`;
+  if (t.includes('headache') || (t.includes('head') && (t.includes('hurt') || t.includes('pain') || t.includes('pound'))) || t.includes('migraine')) return `Headaches are common in pregnancy — blood volume changes, hormones, dehydration, and tension are all frequent causes.\n\nDrink water first, rest somewhere dark and quiet, cool cloth on your forehead or neck. Tylenol is considered safe — avoid ibuprofen and aspirin. If a headache is severe, sudden, or comes with vision changes, call your OB right away.`;
+  if (t.includes('cramp') || (t.includes('pain') && (t.includes('lower') || t.includes('belly') || t.includes('abdomen') || t.includes('stomach') || t.includes('side')))) return `Cramping in pregnancy can mean different things, ${name}. Mild occasional cramps are often just your uterus stretching. Round ligament pain — a sharp twinge on one or both sides of your lower abdomen — is very common from about Week 14 and harmless.\n\nBut I'm not a doctor and I can't assess what you're feeling from here. If cramping is strong, rhythmic, accompanied by bleeding, or genuinely worrying you — please call your OB today. There is no overcautious question when it comes to your baby.`;
+  if (t.includes('bleed') || t.includes('spotting') || t.includes('blood')) return `${name}, I want to respond to this carefully. Any bleeding in pregnancy should be reported to your OB or midwife — not because it's necessarily serious, but because they need to evaluate it. Please call them today and describe what you're seeing: color, amount, how long it's been happening. You're right to pay attention to it.`;
+  if (t.includes('constipat') || t.includes("can't poop") || t.includes('bathroom')) return `Constipation in pregnancy is incredibly common, ${name} — progesterone slows your entire digestive system down, and prenatal iron supplements make it worse. You're not alone in this.\n\nFiber from real food helps most: oats, lentils, prunes, pears, leafy greens. Drink more water than you think you need. Walking after meals keeps things moving. Colace (docusate) is considered safe in pregnancy if you need a gentle stool softener — ask your OB.`;
+  if (t.includes('round ligament') || t.includes('sharp pain side') || t.includes('stabbing')) return `Round ligament pain is one of those pregnancy surprises no one warns you about enough, ${name}. It's a sharp, stabbing sensation on one or both sides of your lower abdomen — caused by the ligaments supporting your uterus stretching as it grows.\n\nIt's completely harmless, though genuinely startling. It often hits when you stand up quickly, sneeze, or roll over in bed. Moving more slowly helps. It usually peaks in the second trimester and then eases.`;
+  if (t.includes('stretch mark') || t.includes('skin') && t.includes('itch')) return `Stretch marks in pregnancy are almost universal, ${name} — your skin is expanding faster than it can keep up. They're caused by the middle layer of skin stretching, and while creams and oils can help with itching and dryness, they don't prevent the marks themselves.\n\nThe honest truth: stretch marks are your body's record of what it did. Most fade to silver over time. Your baby will not care. And neither, eventually, will you — though I know that's easier said than believed right now.`;
+
+  // ── EMOTIONAL / MENTAL ──
+  if (t.includes('depress') || t.includes('hopeless') || t.includes('not ok') || t.includes("don't want to be pregnant") || t.includes('hate being pregnant')) return `${name}, what you're feeling matters and deserves to be taken seriously. Prenatal depression affects roughly one in five pregnant women and is often invisible because we expect pregnancy to feel only joyful.\n\nYou don't have to perform happiness. You are allowed to feel whatever you actually feel.\n\nPlease tell your OB or midwife how you're doing emotionally — at your next visit, or sooner if it's persistent. There is real support available and asking for it is one of the bravest things you can do for both you and your baby.`;
+  if (t.includes('anxi') || t.includes('scared') || t.includes('worried') || t.includes('fear') || t.includes('nervous') || t.includes('panic') || t.includes('terrified')) return `Anxiety in pregnancy is one of the most honest things a woman can feel, ${name}. You are responsible for a life that isn't here yet. Of course your mind is working overtime.\n\nName the specific fear if you can — shapeless anxiety is harder to hold than a named one. Write it down. Getting something out of your body and onto paper tends to soften it.\n\nIf it's persistent or affecting your daily life, please tell your OB. Prenatal anxiety is real and treatable.`;
+  if (t.includes('angry') || t.includes('rage') || t.includes('frustrated') || t.includes('irritable') || t.includes('annoyed at everything')) return `Pregnancy hormones can make rage feel like it comes from nowhere and everywhere at once, ${name}. You're not losing your mind — your hormone levels are at heights they've never been before, and emotions that might normally be manageable can feel enormous.\n\nName it if you can. Tell the people around you what you need. And know that this intensity usually has a season — it doesn't last forever, even when it feels like it will.`;
+  if (t.includes('sad') || t.includes('depress') || t.includes('cry') || (t.includes('overwhelm') && !t.includes('baby shower'))) return `${name}, whatever you're feeling — it belongs here. Pregnancy holds joy and grief and terror and tenderness all at once, sometimes in the same afternoon.\n\nYou don't have to perform gratitude when you're exhausted. You don't have to perform calm when you're afraid. What you feel is real and it is allowed.\n\nIf the sadness is heavy or persistent, please tell your OB. Prenatal depression is real and very treatable.`;
+  if (t.includes('lonely') || t.includes('alone') || t.includes('no one understands') || t.includes('isolated')) return `Pregnancy can be profoundly lonely, ${name} — even when you're surrounded by people who love you. No one can fully enter what you're experiencing from the inside.\n\nWhat I'd gently encourage: find one person who will simply sit with you in it, not try to fix it. A friend who will listen without advice. A partner who will hold your hand without solving anything. And if you need more support than you have — please tell your OB. There are real resources for exactly this.`;
+  if (t.includes('guilty') || t.includes('bad mom') || t.includes('not doing enough') || t.includes('failing')) return `${name}, you are not failing. The fact that you're worried about doing enough already tells me you're doing enough — people who don't care don't ask these questions.\n\nPregnancy guilt is almost universal. The coffee you had before you knew. The workout you skipped. The food you couldn't stomach. Your baby is not keeping score. She just needs you — imperfect, human, and fully present when you can be.`;
+
+  // ── BABY SHOWER / NESTING / PREP ──
+  if (t.includes('baby shower') || t.includes('shower')) return `A baby shower is such a beautiful thing to be thinking about, ${name}. It's the moment where the people who love you gather to say — we see you, we're with you, and we can't wait to meet her.\n\nA few things worth thinking through: who do you want there? Big and celebratory, or intimate and close? Theme or no theme? And who in your life is the kind of person who loves to organize these things — because the best showers happen when someone who genuinely loves doing this takes the lead.\n\nWhat's your vision for it?`;
+  if (t.includes('nursery') || t.includes('baby room') || t.includes('setting up') && t.includes('room')) return `Setting up the nursery is one of those pregnancy milestones that makes it feel real in a completely new way, ${name}. You're making space for her in the physical world.\n\nThe things that actually matter in a newborn room: a safe sleep surface (firm, flat, nothing in the crib), a good feeding chair you can actually stay awake in at 3am, blackout curtains, and a sound machine. Everything else is beautiful but optional.\n\nWhat have you chosen so far? I'd love to hear what you're putting together for her.`;
+  if (t.includes('registry') || t.includes('what to buy') || t.includes('what do i need') || t.includes('must have') || t.includes('must-have')) return `Registry overwhelm is real, ${name} — the baby product industry is enormous and a lot of it is noise. Here's what actually matters in the first weeks: a safe place for her to sleep, a car seat, a few swaddles, some onesies in newborn and 0-3 sizes, diapers, wipes, and a feeding setup depending on whether you're breastfeeding.\n\nThe things most mamas say they couldn't live without: a good baby carrier or wrap, a swing or bouncer that their specific baby actually liked (this is a gamble), a white noise machine, and lanolin or nipple cream if breastfeeding.\n\nThe things most mamas say they never used: the wipe warmer, the diaper Genie, the elaborate bath setup, most of the "newborn" clothes.\n\nWhat specific things are you trying to decide on?`;
+  if (t.includes('car seat') || t.includes('carseat') || t.includes('stroller') || t.includes('pram')) return `Car seat and stroller are two of the biggest gear decisions, ${name}, and the good news is you don't have to spend a fortune.\n\nFor car seats: the Chicco KeyFit and Graco SnugRide are consistently top-rated infant seats at accessible prices. Safety ratings matter more than brand name — check the NHTSA ratings before buying.\n\nFor strollers: think about your actual lifestyle. Do you walk a lot? A jogging stroller. City apartment? Something compact that folds small. Do everything? A travel system that pairs with your car seat is the most practical choice for most people.\n\nWhat matters most to you in how you'll actually use it?`;
+  if (t.includes('breastfeed') || t.includes('nursing') || t.includes('latch') || t.includes('pump') || t.includes('formula') || t.includes('bottle')) return `However you choose to feed your baby — breastfeeding, formula, combination — the only thing that matters is that she's fed and you're okay, ${name}.\n\nIf you're planning to breastfeed: take a class before she arrives if you can, find a local lactation consultant now so you know where to turn if it's hard (it's often hard, and that's not a failure), and know that the first two weeks are the steepest part of the learning curve.\n\nIf you're considering formula or combination feeding: there are wonderful formulas, it is not failure, and a fed baby and a sane mama matters more than any feeding ideology.\n\nWhat are you thinking about for feeding?`;
+  if (t.includes('postpartum') || t.includes('after birth') || t.includes('recovery') || t.includes('fourth trimester')) return `The fourth trimester is so real and so undertalked, ${name}. The first six to twelve weeks after birth are some of the most intense, disorienting, beautiful, exhausting weeks of a woman's life.\n\nYour body needs real recovery — stitches if you had them, bleeding for several weeks, hormone drops that can feel like falling off a cliff. And you'll be doing all of that while completely sleep-deprived and in charge of a person who needs everything from you.\n\nThe most important things: accept every offer of help, prepare freezer meals now, give yourself permission not to have it together, and watch for signs of postpartum depression (persistent sadness, inability to bond, intrusive thoughts) — it's very common and very treatable.`;
+  if (t.includes('birth plan') || t.includes('birth preferences') || t.includes('delivery plan')) return `A birth plan — or birth preferences as more OBs prefer to call them now — is a wonderful thing to think through, ${name}. Not because you can control birth, but because the process of writing it helps you understand what matters most to you.\n\nThings worth thinking about: who do you want in the room? What does pain management look like to you — are you open to an epidural or do you want to try without? Delayed cord clamping, skin-to-skin immediately after birth, who catches the baby if your OB allows it — these are all things you can express preferences about.\n\nKeep it to one page. Use it as a conversation with your OB, not as a contract. What matters most to you?`;
+  if (t.includes('epidural') || t.includes('natural birth') || t.includes('pain relief') || t.includes('unmedicated')) return `The epidural question is one of the most personal in all of pregnancy, ${name}, and there is genuinely no right answer.\n\nWhat I'd say: make your decision based on your values and your body, not on what you think you're "supposed" to want. An unmedicated birth is a profound experience if that's what you want. An epidural that lets you rest and be present for the pushing is equally valid. Both are brave. Both are real births.\n\nThe one thing I'd caution against: making a decision you feel you can't revisit. Labor has a way of teaching you things about yourself you didn't know. Give yourself permission to change your mind in the room.`;
+  if (t.includes('c-section') || t.includes('cesarean') || t.includes('csection')) return `A c-section — whether planned or unexpected — is a real birth, ${name}. Every bit as real and brave as any other way of bringing a baby into the world.\n\nIf you're planning one: recovery takes longer than a vaginal birth, you'll need help at home for at least two weeks, and you won't be able to drive or lift anything heavier than the baby for about six weeks. Plan for that support in advance.\n\nIf you're worried about having one unexpectedly: knowing what to expect helps. You'll be awake. Your partner can usually be there. You'll hear her cry. That moment is the same, whatever the path to it.`;
+
+  // ── BABY NAME / IDENTITY ──
+  if (t.includes('name') && (t.includes('baby') || t.includes('her') || t.includes('pick') || t.includes('choose') || t.includes('thinking') || t.includes('decide'))) return `Baby names are one of the most intimate decisions, ${name} — and one of the most surprisingly difficult. Some names feel right in your mouth immediately. Others grow on you. Some you think are perfect until you've said them out loud a hundred times.\n\nThe names we keep coming back to, even when we try to talk ourselves out of them, tend to be the ones. Is there one that keeps returning?`;
+  if (t.includes('girl') || t.includes('boy') || t.includes('gender') || t.includes('sex of') || t.includes('finding out')) return `Whether you find out or wait is such a personal choice, ${name} — and either way has its own kind of magic.\n\nFinding out gives you time to bond with a specific person, to say her name before she arrives. Not finding out gives you one of the last true surprises in life — that moment in the room when someone says the words.\n\nHave you decided? Or are you still sitting with it?`;
+
+  // ── RELATIONSHIPS / PEOPLE ──
+  if (t.includes('partner') || t.includes('husband') || t.includes('boyfriend') || t.includes('he doesn') || t.includes("he doesn't")) return `Pregnancy changes every relationship, ${name} — and that's disorienting even in the best ones. You're both navigating something enormous from completely different vantage points. He can see you changing but can't feel what you feel. You're carrying everything and need him to somehow know that without you having to explain it.\n\nSpecificity helps more than anything else. Not "I need more support" — but "I need you to ask me how I'm feeling tonight without waiting for me to bring it up." Partners want to show up. They often just don't know the shape of it.\n\nWhat's feeling hardest between you two right now?`;
+  if (t.includes('mother in law') || t.includes('mil') || t.includes('in-law') || t.includes('inlaw')) return `In-laws and pregnancy is one of those combinations that can bring out everyone's most complicated feelings, ${name}. She has opinions. You have your own. You're both claiming the same baby in different ways.\n\nWhat tends to help: decide early (with your partner, privately) what your actual boundaries are, then present them as a united front. Not as a confrontation — as clarity. "Here's how we're doing things" is different from "you're doing it wrong."\n\nWhat's the specific thing coming up?`;
+  if (t.includes('mom') || t.includes('mother') || (t.includes('my mom') && t.length < 80)) return `Pregnancy has a way of bringing up everything about our own upbringing — what we want to carry forward, what we want to do differently, sometimes what we're still healing from.\n\nThat work — figuring out what kind of mother you want to be in light of the mother you had — is some of the most important work of this season, even when it's hard. What's coming up for you?`;
+  if (t.includes('friend') || t.includes('friendships') || t.includes('friends don')) return `Pregnancy changes friendships in ways that can be quietly heartbreaking, ${name}. Some friends show up differently than you expected. Some don't show up at all. And you may find yourself gravitating toward other women who are in this season too.\n\nThis is normal, and it doesn't mean those friendships are over — it means they're changing. Most relationships adapt. Some don't. Either way, you'll know more about who your people are by the time she arrives.`;
+
+  // ── PRACTICAL / LIFE ──
+  if (t.includes('work') || t.includes('job') || t.includes('boss') || t.includes('career') || t.includes('maternity leave') || t.includes('tell my boss') || t.includes('workplace')) return `Navigating work during pregnancy is genuinely complicated, ${name}. Deciding when to tell people, managing your energy against professional expectations, figuring out maternity leave — it all lands on top of everything else you're carrying.\n\nIn the US, FMLA gives you 12 weeks of job-protected leave if you qualify (12 months at the company, company of 50+ employees). Some states have additional protections. Your HR department is the right place to start — ask about your specific policy before you have the conversation with your boss.\n\nWhat's the specific thing you're working through?`;
+  if (t.includes('money') || t.includes('afford') || t.includes('finances') || t.includes('cost') || t.includes('expensive') || t.includes('budget')) return `Financial anxiety in pregnancy is so real, ${name}, and not enough people talk about it honestly. Babies are expensive, parental leave in the US is often inadequate, and the timing of all of this rarely aligns perfectly with anyone's financial plan.\n\nA few things that genuinely help: build a specific postpartum budget now (what will your income look like on leave? what are the actual monthly costs of a baby?), look into WIC if you qualify, and remember that babies need surprisingly few things in the first weeks — love, milk, and warmth.\n\nWhat specific financial concern is weighing on you most?`;
+  if (t.includes('move') || t.includes('moving') || t.includes('new home') || t.includes('new house')) return `Moving while pregnant — or moving with a newborn — is one of those life events that is objectively a lot, ${name}. There's no perfect timing for it.\n\nIf you're moving before she arrives: try to be settled at least 4-6 weeks before your due date so you have time to rest and nest. If you're moving after: give yourself permission for everything to be a work in progress for months. The house doesn't have to be perfect. She just needs you.`;
+  if (t.includes('travel') || t.includes('flying') || t.includes('trip') || t.includes('vacation') || t.includes('babymoon')) return `Travel during pregnancy is generally safe in the second trimester, ${name} — most airlines allow flying up to 36 weeks, though some international carriers have earlier cutoffs. The second trimester is widely considered the golden window for a babymoon: energy is back, bump is visible but not unwieldy, and nausea has usually eased.\n\nIf you're flying: stay hydrated, move around the cabin periodically, wear compression socks, and carry a copy of your prenatal records.\n\nWhere are you thinking of going?`;
+  if (t.includes('exercise') || t.includes('workout') || t.includes('gym') || t.includes('running') || t.includes('yoga') || t.includes('swim')) return `Staying active during pregnancy is genuinely wonderful for you, ${name} — it helps with energy, sleep, mood, back pain, and even labor. The general guideline is 150 minutes of moderate activity per week, and most activities you did before pregnancy are safe to continue.\n\nPrenatal yoga is one of the best things you can do — it builds the breathing and body awareness that serves you in labor. Swimming is incredibly gentle on your joints and feels amazing when you're heavy. Walking is underrated and available to everyone.\n\nWhat does your movement look like right now?`;
+  if (t.includes('sex') || t.includes('intimate') || t.includes('intercourse') || t.includes('libido')) return `Sex during pregnancy is something a lot of people wonder about and few people ask their OB directly, ${name}. For most pregnancies, sex is completely safe throughout — including orgasm, which won't cause labor.\n\nLibido during pregnancy is wildly variable and very real. Some women feel more connected to their bodies. Others feel the opposite. Both are normal. Changes in comfort and body image are real too.\n\nIf you've been told you have placenta previa, or if you're at risk for preterm labor, your OB may advise against it — so check if you're not sure. Otherwise, do what feels right for you and your partner.`;
+  if (t.includes('vaccine') || t.includes('flu shot') || t.includes('tdap') || t.includes('covid') || t.includes('vaccination')) return `Vaccines during pregnancy are a topic worth discussing with your OB specifically for your situation, ${name}. In general, the flu shot and Tdap (whooping cough) are recommended during pregnancy and considered safe — the Tdap in particular passes protective antibodies to your baby.\n\nFor COVID vaccines, current guidance from ACOG (the American College of OBs) supports vaccination during pregnancy. Your OB is the best person to walk you through the current recommendations for your specific circumstances.`;
+
+  // ── BABY DEVELOPMENT ──
+  if (t.includes('this week') || (t.includes('baby') && (t.includes('doing') || t.includes('big') || t.includes('size') || t.includes('look like'))) || t.includes('development')) return `You're in Week ${w}, ${name} — "${d.title}."\n\n${d.body}\n\nThis week nutritionally: ${d.nourish}\n\nYour scratch-off experience for this week is waiting for you on the weekly page if you haven't revealed it yet.`;
+  if (t.includes('kick') || t.includes('movement') || t.includes('flutter') || t.includes('wiggle') || t.includes('moving')) return w < 18
+    ? `The first flutters may be coming soon, ${name} — or you may have already felt them without being sure. It's often described as tiny bubbles, popcorn popping, or a soft tapping from the inside. First-time mamas sometimes don't notice until Week 20 or a bit later. When you do feel her — stop everything for that moment. That is her saying hello.`
+    : `At Week ${w}, her movements should be becoming more regular and recognizable. After Week 28, kick counts matter — ten movements in two hours is a healthy benchmark. If you notice a significant decrease in her usual pattern, call your OB or midwife that day. Your instincts about your baby are worth trusting.`;
+  if (t.includes('heartbeat') || t.includes('heart rate') || t.includes('doppler')) return `Hearing the heartbeat for the first time is one of those moments that makes the whole thing undeniably real, ${name}. At Week ${w}, her heartbeat is beating around 120–160 times per minute — fast and strong, like a tiny drumroll.\n\nIf you have a home Doppler, use it sparingly and with caution — they can cause anxiety if you can't find it easily, and they're not a substitute for professional monitoring. Trust your OB's appointments for the real picture.`;
+  if (t.includes('ultrasound') || t.includes('scan') || t.includes('anatomy')) return `Ultrasounds are such profound windows, ${name}. At Week ${w}, ${d.body}\n\nIf you're approaching the anatomy scan (typically around Week 18-20), it's both exciting and nerve-wracking. The technician will measure everything — head, heart, spine, limbs. Most of the time it's simply a beautiful hour of seeing her. Breathe. Ask questions. Bring your partner if you can.`;
+  if (t.includes('labor') || t.includes('birth') || t.includes('contraction') || t.includes('deliver') || t.includes('push')) return w < 28
+    ? `You have time before labor becomes the immediate conversation, ${name} — and that's genuinely a gift. Use these weeks to learn without urgency.\n\nThe 5-1-1 rule is worth knowing: contractions 5 minutes apart, lasting 1 minute, for at least 1 hour is the typical guideline for when to head to the hospital. Talk to your OB about your specific situation.\n\nNo birth goes exactly as planned — the goal is always a healthy baby and a cared-for mama, whatever the path looks like.`
+    : `You're getting close, ${name}, and it makes sense that labor is on your mind. Early labor often feels like strong rhythmic cramps or low back pressure. Active labor is more intense and regular. The 5-1-1 rule tells you when to head in.\n\nPack your bag if you haven't. Know your birth center's number. Trust your instincts when the time comes. Your body was made for this.`;
+  if (t.includes('eat') || t.includes('food') || t.includes('nutrition') || t.includes('nourish') || t.includes('diet')) return `For Week ${w}: ${d.nourish}\n\nThe most honest pregnancy nutrition guidance I can offer — eat real food, eat enough of it, don't skip meals, and be gentle with yourself on the hard days when crackers are all you can manage. A fed mama is a good mama. Full stop.`;
+
+  // ── POSITIVE THINGS ──
+  if (t.includes('excited') || t.includes('so happy') || t.includes('can\'t wait') || t.includes('love this') || t.includes('amazing') || (t.includes('good') && t.length < 30)) return `${name}, I love hearing that. Soak it in — write it down in your journal if you can, even just a sentence. You'll want to remember exactly how this week felt when you're on the other side.\n\nWhat's making it feel so good right now?`;
+  if (t.includes('felt her') || t.includes('she kicked') || t.includes('baby kicked') || t.includes('first kick') || t.includes('first movement')) return `${name}. That moment.\n\nThat was her saying hello. That was her letting you know she's already here, already herself, already real in a way that takes your breath away.\n\nWrite this down. The date, where you were, what it felt like. You will want to tell her about this one day.`;
+
+  // ── GENERAL OPEN CONVERSATION ──
+  const openResponses = [
+    `${name}, tell me more about that. What's actually going on?`,
+    `I'm here for all of it — keep going. What does that look like for you?`,
+    `That's worth talking through. What part of it is sitting heaviest right now?`,
+    `I want to understand this better, ${name}. Can you tell me more?`,
+    `What's underneath that? What are you really sitting with?`
+  ];
+  return openResponses[Math.floor(Math.random() * openResponses.length)];
+}
+
+
+
+async function sendSageMessage(overrideText) {
+  if (sageTyping) return;
+  const input = document.getElementById('sage-input');
+  const text = (overrideText || input.value).trim();
+  if (!text) return;
+  input.value = '';
+  input.style.height = 'auto';
+
+  appendSageMessage('user', text);
+  sageHistory.push({ role: 'user', content: text });
+  sageTyping = true;
+  showTyping();
+
+  try {
+    const resp = await fetch('/api/sage', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system: buildSystemPrompt(),
+        messages: sageHistory.map(m => ({ role: m.role, content: m.content }))
+      })
+    });
+
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+    const reply = data.reply;
+    if (!reply) throw new Error('empty');
+
+    removeTyping();
+    appendSageMessage('sage', reply);
+    sageHistory.push({ role: 'assistant', content: reply });
+
+  } catch(err) {
+    console.log('Sage API error:', err.message);
+    await new Promise(r => setTimeout(r, 700 + Math.random() * 400));
+    removeTyping();
+    const reply = buildFallbackResponse(text, sageHistory);
+    appendSageMessage('sage', reply);
+    sageHistory.push({ role: 'assistant', content: reply });
+  }
+
+  if (sageHistory.length > 30) sageHistory = sageHistory.slice(-30);
+  sageTyping = false;
+}
+
+// ─── START ───────────────────────────────────────────────────────────────────
+loadState();
+if (state.name) {
+  initApp();
+} else {
+  showScreen('onboard');
+}
+</script>
+</body>
+</html>
