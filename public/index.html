@@ -563,7 +563,7 @@ html, body {
 
 /* Gratitude */
 .grat-panel {
-  padding: 1rem 1.4rem 2rem;
+  padding: 1rem 1.4rem 6rem;
   border-top: 1px solid rgba(201,169,110,0.14);
 }
 .grat-prompt {
@@ -1173,12 +1173,11 @@ html, body {
     <div class="grat-panel">
       <div class="wk-slabel">Gratitude</div>
       <p class="grat-prompt">Three things I'm grateful for this week:</p>
-      <div class="grat-row"><span class="grat-num">I</span><input class="grat-input" id="g1" placeholder="I'm grateful for…"/></div>
-      <div class="grat-row"><span class="grat-num">II</span><input class="grat-input" id="g2" placeholder="I'm grateful for…"/></div>
-      <div class="grat-row"><span class="grat-num">III</span><input class="grat-input" id="g3" placeholder="I'm grateful for…"/></div>
-      <div style="margin-top:0.8rem;display:flex;align-items:center;gap:0.8rem">
-        <button class="jp-save-btn" onclick="saveGratitude()">Save gratitude</button>
-        <span class="jp-saved" id="grat-saved">✓ saved</span>
+      <div class="grat-row"><span class="grat-num">I</span><input class="grat-input" id="g1" placeholder="I'm grateful for…" onblur="saveGratitude()"/></div>
+      <div class="grat-row"><span class="grat-num">II</span><input class="grat-input" id="g2" placeholder="I'm grateful for…" onblur="saveGratitude()"/></div>
+      <div class="grat-row"><span class="grat-num">III</span><input class="grat-input" id="g3" placeholder="I'm grateful for…" onblur="saveGratitude()"/></div>
+      <div style="margin-top:0.6rem;height:1.2rem">
+        <span class="jp-saved" id="grat-saved">✓ gratitude saved</span>
       </div>
     </div>
   </div>
@@ -1409,17 +1408,34 @@ function buildHomeScreen() {
 function buildMemoryTiles() {
   const grid = document.getElementById('memory-grid');
   const icons = ['✦', '◇', '○', '◈'];
-  const entries = Object.entries(state.journals).filter(([,v]) => v).slice(-4);
-  if (entries.length === 0) {
+
+  // Collect weeks with journal OR gratitude
+  const allWeeks = new Set([
+    ...Object.keys(state.journals).filter(w => state.journals[w]),
+    ...Object.keys(state.gratitude).filter(w => {
+      const g = state.gratitude[w];
+      return g && (g[1] || g[2] || g[3]);
+    })
+  ]);
+
+  if (allWeeks.size === 0) {
     grid.innerHTML = '<div style="grid-column:1/-1;font-family:Cormorant Garamond,serif;font-style:italic;color:var(--text-muted);text-align:center;padding:1.5rem 0;font-size:0.95rem;">Your journal entries will appear here as you write them.</div>';
     return;
   }
-  grid.innerHTML = entries.map(([wk, text], i) => {
-    const d = getWeekData(parseInt(wk));
+
+  const sorted = [...allWeeks].map(Number).sort((a, b) => b - a).slice(0, 4);
+
+  grid.innerHTML = sorted.map((wk, i) => {
+    const d = getWeekData(wk);
+    const journal = state.journals[wk] || '';
+    const g = state.gratitude[wk] || {};
+    const preview = journal
+      ? journal.substring(0, 60) + (journal.length > 60 ? '…' : '')
+      : g[1] ? `Grateful for: ${g[1].substring(0, 45)}…` : '';
     return `<div class="memory-tile" onclick="openWeek(${wk})">
       <div class="mt-icon">${icons[i % 4]}</div>
       <div class="mt-week">Week ${wk}</div>
-      <div class="mt-title">${text.substring(0, 60)}${text.length > 60 ? '…' : ''}</div>
+      <div class="mt-title">${preview}</div>
     </div>`;
   }).join('');
 }
@@ -1576,16 +1592,43 @@ function saveGratitude() {
 // ─── MEMORIES ────────────────────────────────────────────────────────────────
 function updateMemoriesScreen() {
   const list = document.getElementById('mem-list');
-  const entries = Object.entries(state.journals).filter(([,v]) => v).reverse();
-  if (entries.length === 0) {
+
+  // Collect all weeks that have journal OR gratitude
+  const allWeeks = new Set([
+    ...Object.keys(state.journals).filter(w => state.journals[w]),
+    ...Object.keys(state.gratitude).filter(w => {
+      const g = state.gratitude[w];
+      return g && (g[1] || g[2] || g[3]);
+    })
+  ]);
+
+  if (allWeeks.size === 0) {
     list.innerHTML = '<div class="me-empty">Your written memories will appear here.<br>Start journaling in any week\'s page.</div>';
     return;
   }
-  list.innerHTML = entries.map(([wk, text]) => {
-    const d = getWeekData(parseInt(wk));
+
+  // Sort weeks descending
+  const sorted = [...allWeeks].map(Number).sort((a, b) => b - a);
+
+  list.innerHTML = sorted.map(wk => {
+    const d = getWeekData(wk);
+    const journal = state.journals[wk] || '';
+    const g = state.gratitude[wk] || {};
+    const g1 = g[1] || ''; const g2 = g[2] || ''; const g3 = g[3] || '';
+    const hasGrat = g1 || g2 || g3;
+
+    const gratHTML = hasGrat ? `
+      <div style="margin-top:0.7rem;padding-top:0.7rem;border-top:1px solid rgba(201,169,110,0.15)">
+        <div style="font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:0.4rem">Gratitude</div>
+        ${g1 ? `<div style="font-family:'Cormorant Garamond',serif;font-size:0.9rem;color:var(--text-light);margin-bottom:0.2rem">I &nbsp; ${g1}</div>` : ''}
+        ${g2 ? `<div style="font-family:'Cormorant Garamond',serif;font-size:0.9rem;color:var(--text-light);margin-bottom:0.2rem">II &nbsp; ${g2}</div>` : ''}
+        ${g3 ? `<div style="font-family:'Cormorant Garamond',serif;font-size:0.9rem;color:var(--text-light)">III &nbsp; ${g3}</div>` : ''}
+      </div>` : '';
+
     return `<div class="mem-entry" onclick="openWeek(${wk})">
-      <div class="me-week">Week ${wk} · ${d.title}</div>
-      <div class="me-text">${text}</div>
+      <div class="me-week">Week ${wk} · ${d.t}</div>
+      ${journal ? `<div class="me-text">${journal}</div>` : ''}
+      ${gratHTML}
     </div>`;
   }).join('');
 }
