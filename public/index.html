@@ -1339,8 +1339,10 @@ function calcWeek(dueDateStr) {
 
 // ─── ONBOARDING ──────────────────────────────────────────────────────────────
 function startApp() {
-  const name = document.getElementById('ob-name').value.trim() || 'Mama';
-  const due = document.getElementById('ob-due').value.trim();
+const name = document.getElementById('ob-name').value.trim();
+if (!name) { document.getElementById('ob-name').style.borderColor = 'var(--rose)'; document.getElementById('ob-name').focus(); return; }
+const due = document.getElementById('ob-due').value.trim();
+if (!due) { document.getElementById('ob-due').style.borderColor = 'var(--rose)'; document.getElementById('ob-due').focus(); return; }  
   state.name = name;
   state.dueDate = due || null;
   state.currentWeek = calcWeek(due) || 12;
