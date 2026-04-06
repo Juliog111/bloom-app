@@ -2250,12 +2250,10 @@ async function sendSageMessage(overrideText) {
   showTyping();
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch('/api/sage', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1024,
         system: buildSystemPrompt(),
         messages: sageHistory.map(m => ({ role: m.role, content: m.content }))
       })
@@ -2263,8 +2261,8 @@ async function sendSageMessage(overrideText) {
 
     const data = await resp.json();
 
-    if (data.error) throw new Error(data.error.message);
-    const reply = data.content?.[0]?.text;
+    if (data.error) throw new Error(data.error);
+    const reply = data.reply;
     if (!reply) throw new Error('empty');
 
     removeTyping();
