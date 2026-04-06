@@ -1380,11 +1380,13 @@ const WEEKS = [
     <ellipse cx="24" cy="25" rx="5" ry="7" fill="white" fill-opacity="0.3"/>
     <path d="M30 14 C30 14 28 8 33 5" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>
     <ellipse cx="38" cy="42" rx="3" ry="4" fill="#d08010" fill-opacity="0.18"/>`,body:"A waxy protective coating is forming over her skin. Her brain is creating millions of nerve cells. She may already be entering REM cycles — she may be dreaming. She is the size of a mango.",nourish:"Choline supports brain development. One egg yolk daily is one of the simplest and most powerful things you can do for her forming mind.",prompt:"Write down what you dream about.",sub:"For one week, keep a notebook beside your bed. Your subconscious is processing this enormous becoming. What is it saying?",jq:"A dream I've had recently, and what I think it means…"},
-  {w:20,title:"the halfway point",t:2,fruit:"banana",svg:`<path d="M16 41 C14 30 18 17 33 14 C40 12 45 17 43 26 C41 35 30 41 16 41 Z" fill="#f0d050" fill-opacity="0.2"/>
-    <path d="M17 40 C15 30 19 18 33 15 C39 13 44 18 42 27 C40 35 30 40 17 40 Z" fill="#f0d050" fill-opacity="0.75"/>
-    <path d="M17 40 C15 30 19 18 33 15 C39 13 44 18 42 27 C40 35 30 40 17 40 Z" fill="none" stroke="#c8a820" stroke-width="0.7"/>
-    <path d="M19 37 C17 29 21 20 33 17" stroke="white" stroke-width="2" stroke-opacity="0.3" stroke-linecap="round"/>
-    <path d="M20 38 C18 30 22 20 34 17" stroke="#c8a820" stroke-width="0.5" stroke-opacity="0.35" fill="none"/>`,body:"You are halfway there. Twenty weeks. Your baby is the size of a banana — 10 inches long. She has a favorite position. She has hair. She is absolutely, completely herself.",nourish:"Treat yourself to a meal you love. Halfway deserves celebration. Nourish your body with joy today — that is also a nutrient.",prompt:"Write her a halfway letter.",sub:"Tell her who you are at this moment. What you're afraid of. What you can't wait for. Tuck it in your journal.",jq:"Halfway there — what has surprised me most about this journey so far…"},
+  {w:20,title:"the halfway point",t:2,fruit:"banana",svg:`<path d="M15 38 C13 28 16 18 24 13 C32 8 40 10 44 18 C46 23 44 28 40 30 C36 32 30 30 26 28 C22 26 19 24 17 26 C15 28 15 33 15 38 Z" fill="#f0d050" fill-opacity="0.18"/>
+    <path d="M16 37 C14 27 17 17 25 12 C33 7 41 9 45 17 C47 22 45 27 41 30 C37 32 31 31 27 29 C23 27 20 25 18 27 C16 29 16 33 16 37 Z" fill="#f0d050" fill-opacity="0.78"/>
+    <path d="M16 37 C14 27 17 17 25 12 C33 7 41 9 45 17 C47 22 45 27 41 30 C37 32 31 31 27 29 C23 27 20 25 18 27 C16 29 16 33 16 37 Z" fill="none" stroke="#c8a820" stroke-width="0.8"/>
+    <path d="M18 34 C16 26 19 18 26 14" stroke="white" stroke-width="2" stroke-opacity="0.3" stroke-linecap="round"/>
+    <path d="M44 18 C45 15 44 12 42 11" stroke="#c8a820" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <ellipse cx="20" cy="28" rx="2.5" ry="4" fill="white" fill-opacity="0.28" transform="rotate(-30 20 28)"/>
+    <path d="M16 37 C15 40 14 43 15 45" stroke="#c8a820" stroke-width="1.5" stroke-linecap="round" fill="none"/>`},
   {w:21,title:"she tastes your food",t:2,fruit:"carrot",svg:`<path d="M30 14 C30 14 21 28 24 43 C25 46 35 46 36 43 C39 28 30 14 30 14 Z" fill="#e87a30" fill-opacity="0.18"/>
     <path d="M30 15 C30 15 22 29 25 43 C26 45.5 34 45.5 35 43 C38 29 30 15 30 15 Z" fill="#e87a30" fill-opacity="0.72"/>
     <path d="M30 15 C30 15 22 29 25 43 C26 45.5 34 45.5 35 43 C38 29 30 15 30 15 Z" fill="none" stroke="#c05810" stroke-width="0.7"/>
@@ -1884,7 +1886,7 @@ function updateMemoriesScreen() {
       </div>` : '';
 
     return `<div class="mem-entry" onclick="openWeek(${wk})">
-      <div class="me-week">Week ${wk} · ${d.t}</div>
+      <div class="me-week">Week ${wk} · ${d.title}</div>
       ${journal ? `<div class="me-text">${journal}</div>` : ''}
       ${gratHTML}
     </div>`;
@@ -2015,7 +2017,7 @@ WHAT YOU NEVER DO:
 - Make her feel judged for anything she's feeling or asking
 
 HER CONTEXT RIGHT NOW:
-- Name: ${state.name || 'Mama'}
+- Name: ${state.name ? state.name.split(' ')[0] : 'Mama'}
 - Current week: ${w} of 40
 - Baby is the size of: ${d.fruit}
 - Week theme: "${d.title}"
@@ -2035,7 +2037,7 @@ function initSage() {
   sageInitialized = true;
 
   const d = getWeekData(state.currentWeek);
-  const name = state.name || 'Mama';
+  const name = state.name ? state.name.split(' ')[0] : 'Mama';
   const w = state.currentWeek;
   const trimester = w < 14 ? 'first' : w < 28 ? 'second' : 'third';
   const hasMemory = loadSageMemory();
@@ -2059,7 +2061,7 @@ function initSage() {
       msgs.appendChild(wrap);
     });
     msgs.scrollTop = msgs.scrollHeight;
-    const returning = `Welcome back, ${name}. You're in Week ${w} now — ${d.t}. I remember where we left off. What's on your mind today?`;
+    const returning = `Welcome back, ${name}. You're in Week ${w} now — ${d.title}. I remember where we left off. What's on your mind today?`;
     appendSageMessage('sage', returning);
     sageHistory.push({ role: 'assistant', content: returning });
   } else {
@@ -2068,9 +2070,9 @@ function initSage() {
     if (hasJournal) {
       const entries = Object.entries(state.journals).filter(([,v]) => v);
       const last = entries[entries.length - 1];
-      greeting = `Hello, ${name}. I've been thinking about what you wrote in Week ${last[0]} — "${last[1].substring(0,60)}${last[1].length>60?'…':''}"\n\nYou're in Week ${w} now — ${d.t}. Your baby is the size of a ${d.f} and you're in your ${trimester} trimester.\n\nI'm Sage. I'm here for all of it — the big questions and the small ones, the hard days and the good ones. What's on your mind?`;
+      greeting = `Hello, ${name}. I've been thinking about what you wrote in Week ${last[0]} — "${last[1].substring(0,60)}${last[1].length>60?'…':''}"\n\nYou're in Week ${w} now — ${d.title}. Your baby is the size of a ${d.fruit} and you're in your ${trimester} trimester.\n\nI'm Sage. I'm here for all of it — the big questions and the small ones, the hard days and the good ones. What's on your mind?`;
     } else {
-      greeting = `Hello, ${name}. I'm Sage — and I'm so glad you're here.\n\nYou're in Week ${w} of your journey — "${d.t}." Your baby is the size of a ${d.f} right now, growing in the quiet dark of you.\n\nI'm here to talk through anything. Pregnancy questions, how you're feeling, what's keeping you up at night, what you're most excited about — all of it. What's on your mind?`;
+      greeting = `Hello, ${name}. I'm Sage — and I'm so glad you're here.\n\nYou're in Week ${w} of your journey — "${d.title}." Your baby is the size of a ${d.fruit} right now, growing in the quiet dark of you.\n\nI'm here to talk through anything. Pregnancy questions, how you're feeling, what's keeping you up at night, what you're most excited about — all of it. What's on your mind?`;
     }
     appendSageMessage('sage', greeting);
     sageHistory.push({ role: 'assistant', content: greeting });
@@ -2127,7 +2129,7 @@ function sendChip(el) { sendSageMessage(el.textContent); }
 
 // Rich fallback — handles any conversation naturally
 function buildFallbackResponse(text, history) {
-  const name = state.name || 'Mama';
+  const name = state.name ? state.name.split(' ')[0] : 'Mama';
   const w = state.currentWeek;
   const d = getWeekData(w);
   const t = text.toLowerCase();
