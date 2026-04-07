@@ -348,145 +348,166 @@ html, body {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  padding-bottom: 5rem;
 }
 
+/* TOP RULE */
+.wk-top-rule {
+  height: 3px;
+  background: linear-gradient(90deg, var(--sage-light), var(--gold), var(--rose), var(--gold), var(--sage-light));
+  flex-shrink: 0;
+}
+
+/* HEADER ROW — week number left, fruit right */
 .week-header {
-  padding: 1.4rem 1.4rem 0;
-  text-align: center;
+  padding: 1.2rem 1.4rem 0.8rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   position: relative;
 }
+.wk-header-left { flex: 1; }
 .back-btn {
   position: absolute;
-  left: 1.2rem;
-  top: 1.4rem;
+  left: -0.2rem;
+  top: 1.2rem;
   background: none;
   border: none;
   font-size: 1.3rem;
   color: var(--rose);
   cursor: pointer;
-  padding: 0.2rem;
+  padding: 0.2rem 0.6rem;
+  z-index: 2;
 }
 .wk-brand {
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--text-muted);
+  padding-left: 2rem;
 }
 .wk-num {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 4.5rem;
+  font-size: 5rem;
   font-weight: 300;
   color: var(--rose);
-  line-height: 1;
+  line-height: 0.95;
+  padding-left: 2rem;
 }
 .wk-title {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--text-light);
-  margin-bottom: 1.2rem;
+  padding-left: 2rem;
+  margin-top: 0.2rem;
 }
-
-.wk-fruit-row {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 0 1.4rem 1.2rem;
+.wk-header-right {
+  text-align: center;
+  flex-shrink: 0;
 }
-.wk-dline { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-light), transparent); }
-.wk-fruit-wrap { text-align: center; }
 .wk-fruit-circle {
-  width: 58px; height: 58px;
+  width: 62px; height: 62px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--blush), var(--cream));
   border: 1px solid var(--gold-light);
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 2px 10px rgba(201,169,110,0.18);
+  box-shadow: 0 2px 12px rgba(201,169,110,0.2);
   margin: 0 auto;
 }
 .wk-fruit-name {
-  font-size: 0.55rem;
+  font-size: 0.5rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin-top: 0.3rem;
+  margin-top: 0.35rem;
 }
 
+/* INFO ROW — body + nourish side by side */
+.wk-info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid rgba(201,169,110,0.14);
+  border-bottom: 1px solid rgba(201,169,110,0.14);
+}
 .wk-section {
   padding: 1rem 1.4rem;
-  border-top: 1px solid rgba(201,169,110,0.14);
+}
+.wk-section:first-child {
+  border-right: 1px solid rgba(201,169,110,0.14);
 }
 .wk-slabel {
-  font-size: 0.55rem;
+  font-size: 0.52rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--gold);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.45rem;
 }
 .wk-body {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1rem;
-  line-height: 1.78;
+  font-size: 0.88rem;
+  line-height: 1.7;
   color: var(--text);
 }
 .wk-nourish {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
-  font-size: 0.95rem;
-  line-height: 1.7;
+  font-size: 0.85rem;
+  line-height: 1.65;
   color: var(--text-light);
 }
 
-/* SCRATCH panel */
+/* ── HERO SCRATCH PANEL ── */
 .scratch-panel {
-  padding: 1.2rem 1.4rem 1.4rem;
-  border-top: 1px solid rgba(201,169,110,0.14);
+  padding: 1.4rem 1.4rem 0.6rem;
 }
-.sp-intro {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: 0.82rem;
-  color: var(--text-muted);
+.sp-eyebrow-row {
   text-align: center;
-  margin-bottom: 0.8rem;
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.7rem;
 }
+.sp-intro { display: none; } /* hidden — eyebrow replaces it */
 .sp-container {
   position: relative;
-  border-radius: 14px;
+  border-radius: 18px;
   overflow: hidden;
   cursor: crosshair;
-  box-shadow: 0 2px 16px rgba(201,169,110,0.22);
+  box-shadow: 0 4px 28px rgba(184,109,101,0.22), 0 1px 4px rgba(201,169,110,0.15);
 }
 .sp-reveal {
   background: linear-gradient(135deg, #fff8f5, #fdf0ea);
   border: 1.5px solid var(--rose);
-  border-radius: 14px;
-  padding: 1.6rem 1.3rem;
+  border-radius: 18px;
+  padding: 2rem 1.5rem;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  min-height: 130px;
+  gap: 0.5rem;
+  min-height: 160px;
 }
 .sp-eyebrow {
-  font-size: 0.55rem;
+  font-size: 0.52rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--rose);
 }
 .sp-prompt {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.1rem;
-  line-height: 1.55;
+  font-size: 1.2rem;
+  line-height: 1.5;
   color: var(--text);
   font-weight: 500;
 }
 .sp-sub {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
-  font-size: 0.87rem;
+  font-size: 0.88rem;
   color: var(--text-light);
   line-height: 1.5;
 }
@@ -494,22 +515,28 @@ html, body {
   position: absolute;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  border-radius: 14px;
+  border-radius: 18px;
   touch-action: none;
   transition: opacity 0.7s ease;
 }
 .sp-canvas.faded { opacity: 0; pointer-events: none; }
 .sp-hint {
   text-align: center;
-  margin-top: 0.6rem;
-  font-size: 0.58rem;
-  letter-spacing: 0.22em;
+  margin-top: 0.55rem;
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
   color: var(--text-muted);
   transition: color 0.4s;
 }
 
-/* Journal section */
+/* ── GRATITUDE SECTION ── */
+.grat-panel {
+  padding: 1.2rem 1.4rem 1rem;
+  border-top: 1px solid rgba(201,169,110,0.14);
+}
+
+/* ── JOURNAL SECTION ── */
 .journal-panel {
   padding: 1rem 1.4rem 1.6rem;
   border-top: 1px solid rgba(201,169,110,0.14);
@@ -563,7 +590,7 @@ html, body {
 
 /* Gratitude */
 .grat-panel {
-  padding: 1rem 1.4rem 6rem;
+  padding: 1rem 1.4rem 1rem;
   border-top: 1px solid rgba(201,169,110,0.14);
 }
 .grat-prompt {
@@ -1124,33 +1151,42 @@ html, body {
 <!-- ════ WEEK DETAIL ════ -->
 <div class="screen" id="screen-week">
   <div class="week-detail-scroll" id="week-detail-scroll">
+
+    <!-- TOP RULE -->
+    <div class="wk-top-rule"></div>
+
+    <!-- HEADER: week number left, fruit right -->
     <div class="week-header">
       <button class="back-btn" onclick="goBack()">←</button>
-      <div class="wk-brand">Bloom</div>
-      <div class="wk-num" id="wd-num">—</div>
-      <div class="wk-title" id="wd-title">—</div>
-    </div>
-    <div class="wk-fruit-row">
-      <div class="wk-dline"></div>
-      <div class="wk-fruit-wrap">
+      <div class="wk-header-left">
+        <div class="wk-brand">Bloom</div>
+        <div class="wk-num" id="wd-num">—</div>
+        <div class="wk-title" id="wd-title">—</div>
+      </div>
+      <div class="wk-header-right">
         <div class="wk-fruit-circle">
           <svg width="40" height="40" viewBox="0 0 60 60" fill="none" id="wd-fruit-svg"></svg>
         </div>
         <div class="wk-fruit-name" id="wd-fruit-name">—</div>
       </div>
-      <div class="wk-dline"></div>
     </div>
-    <div class="wk-section">
-      <div class="wk-slabel">This week, inside you</div>
-      <p class="wk-body" id="wd-body">—</p>
+
+    <!-- INFO ROW: body + nourish side by side -->
+    <div class="wk-info-row">
+      <div class="wk-section">
+        <div class="wk-slabel">This week</div>
+        <p class="wk-body" id="wd-body">—</p>
+      </div>
+      <div class="wk-section">
+        <div class="wk-slabel">Nourish</div>
+        <p class="wk-nourish" id="wd-nourish">—</p>
+      </div>
     </div>
-    <div class="wk-section">
-      <div class="wk-slabel">Nourish</div>
-      <p class="wk-nourish" id="wd-nourish">—</p>
-    </div>
+
+    <!-- HERO SCRATCH PANEL -->
     <div class="scratch-panel">
-      <div class="wk-slabel" style="text-align:center">Your weekly experience</div>
-      <p class="sp-intro">Scratch to reveal your moment for this week.</p>
+      <div class="sp-eyebrow-row">✦ &nbsp; your week's experience &nbsp; ✦</div>
+      <p class="sp-intro"></p>
       <div class="sp-container" id="sp-container">
         <div class="sp-reveal">
           <div class="sp-eyebrow">This week's invitation</div>
@@ -1161,15 +1197,8 @@ html, body {
       </div>
       <div class="sp-hint" id="sp-hint">✦ scratch here ✦</div>
     </div>
-    <div class="journal-panel">
-      <div class="wk-slabel">Journal</div>
-      <p class="jp-prompt" id="wd-journal-q">—</p>
-      <textarea class="jp-textarea" id="wd-journal-text" placeholder="Write here…" rows="3"></textarea>
-      <div>
-        <button class="jp-save-btn" onclick="saveJournal()">Save this memory</button>
-        <span class="jp-saved" id="jp-saved">✓ saved</span>
-      </div>
-    </div>
+
+    <!-- GRATITUDE (below scratch, above journal) -->
     <div class="grat-panel">
       <div class="wk-slabel">Gratitude</div>
       <p class="grat-prompt">Three things I'm grateful for this week:</p>
@@ -1180,6 +1209,18 @@ html, body {
         <span class="jp-saved" id="grat-saved">✓ gratitude saved</span>
       </div>
     </div>
+
+    <!-- JOURNAL (at the bottom) -->
+    <div class="journal-panel">
+      <div class="wk-slabel">Journal</div>
+      <p class="jp-prompt" id="wd-journal-q">—</p>
+      <textarea class="jp-textarea" id="wd-journal-text" placeholder="Write here…" rows="3"></textarea>
+      <div>
+        <button class="jp-save-btn" onclick="saveJournal()">Save this memory</button>
+        <span class="jp-saved" id="jp-saved">✓ saved</span>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1287,7 +1328,7 @@ const WEEKS = [
     <ellipse cx="30" cy="31" rx="4.5" ry="7.5" fill="#c9a96e" fill-opacity="0.8"/>
     <ellipse cx="30" cy="31" rx="4.5" ry="7.5" fill="none" stroke="#a88848" stroke-width="0.6"/>
     <ellipse cx="28.5" cy="27" rx="1.5" ry="2.2" fill="white" fill-opacity="0.42"/>
-    <line x1="30" y1="23" x2="30" y2="39" stroke="#a88848" stroke-width="0.4" stroke-opacity="0.3"/>`,body:"A tiny heart is beginning to beat. The neural tube is forming. Arm and leg buds are appearing. Your baby is the size of a sesame seed and already organizing herself.",nourish:"Vitamin B6 can calm morning sickness. Try eating small amounts every 2 hours — empty stomachs intensify nausea.",prompt:"Find something tiny that will belong to her.",sub:"A pair of impossibly small socks. A wooden block. Set it somewhere visible. Let it make it real.",jq:"When I imagine who this baby will be, I see…"},
+    <line x1="30" y1="23" x2="30" y2="39" stroke="#a88848" stroke-width="0.4" stroke-opacity="0.3"/>`,body:"A tiny heart is beginning to beat. The neural tube is forming. Arm and leg buds are appearing. Your baby is the size of a sesame seed and already organizing herself.",nourish:"Vitamin B6 can calm morning sickness. Try eating small amounts every 2 hours — empty stomachs intensify nausea.",prompt:"Find something tiny that will belong to your baby.",sub:"A pair of impossibly small socks. A wooden block. Set it somewhere visible. Let it make it real.",jq:"When I imagine who this baby will be, I see…"},
   {w:6,title:"a face begins to form",t:1,fruit:"sweet pea",svg:`<ellipse cx="30" cy="35" rx="10" ry="12" fill="#9aac95" fill-opacity="0.2"/>
     <ellipse cx="30" cy="35" rx="8.5" ry="10.5" fill="#b0c4aa" fill-opacity="0.6"/>
     <ellipse cx="30" cy="27" rx="7.5" ry="8.5" fill="#9aac95" fill-opacity="0.75"/>
@@ -1300,7 +1341,7 @@ const WEEKS = [
     <circle cx="30" cy="32" r="12" fill="none" stroke="#5a60a0" stroke-width="0.7"/>
     <circle cx="25" cy="26" r="4.5" fill="white" fill-opacity="0.18"/>
     <path d="M26 21 C28 19 32 19 34 21" stroke="#9a9acc" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-    <ellipse cx="36" cy="36" rx="2" ry="3" fill="#5a60a0" fill-opacity="0.2"/>`,body:"Your baby is the size of a blueberry and has hands — paddle-shaped still, but unmistakably hands. Her brain generates 100 new cells per minute. She is waving in the dark.",nourish:"Zinc supports rapid cell division happening now. Pumpkin seeds, chickpeas, Greek yogurt. Your baby needs you nourished.",prompt:"Start a 'day one' playlist.",sub:"Build a playlist of songs you want playing when you first hold her. Add one song every week.",jq:"A song that feels like this pregnancy is…"},
+    <ellipse cx="36" cy="36" rx="2" ry="3" fill="#5a60a0" fill-opacity="0.2"/>`,body:"Your baby is the size of a blueberry and has hands — paddle-shaped still, but unmistakably hands. Her brain generates 100 new cells per minute. She is waving in the dark.",nourish:"Zinc supports rapid cell division happening now. Pumpkin seeds, chickpeas, Greek yogurt. Your baby needs you nourished.",prompt:"Start a 'day one' playlist.",sub:"Build a playlist of songs you want playing when you first hold your baby. Add one song every week.",jq:"A song that feels like this pregnancy is…"},
   {w:8,title:"she is unmistakably human",t:1,fruit:"raspberry",svg:`<circle cx="30" cy="30" r="13" fill="#d4607a" fill-opacity="0.12"/>
     <circle cx="23" cy="26" r="5.5" fill="#d4607a" fill-opacity="0.7"/>
     <circle cx="35" cy="25" r="5.5" fill="#d4607a" fill-opacity="0.65"/>
@@ -1308,13 +1349,13 @@ const WEEKS = [
     <circle cx="21" cy="26" r="1.5" fill="white" fill-opacity="0.35"/>
     <circle cx="33" cy="24" r="1.5" fill="white" fill-opacity="0.3"/>
     <circle cx="28" cy="34" r="1.5" fill="white" fill-opacity="0.35"/>
-    <circle cx="30" cy="18" r="1" fill="#b04060" fill-opacity="0.4"/>`,body:"Every essential organ has begun to form. She has a nose. She has lips. Your baby is the size of a raspberry and is already distinctly, undeniably human.",nourish:"Calcium is critical as her tiny skeleton begins hardening. Dairy, fortified milks, almonds, chia seeds. A smoothie with yogurt and berries counts.",prompt:"Schedule your first prenatal appointment.",sub:"Then celebrate it. The first time you hear her heartbeat will be something you never forget.",jq:"What I'm most looking forward to at my first appointment is…"},
+    <circle cx="30" cy="18" r="1" fill="#b04060" fill-opacity="0.4"/>`,body:"Every essential organ has begun to form. She has a nose. She has lips. Your baby is the size of a raspberry and is already distinctly, undeniably human.",nourish:"Calcium is critical as her tiny skeleton begins hardening. Dairy, fortified milks, almonds, chia seeds. A smoothie with yogurt and berries counts.",prompt:"Schedule your first prenatal appointment.",sub:"Then celebrate it. The first time you hear that heartbeat will be something you never forget.",jq:"What I'm most looking forward to at my first appointment is…"},
   {w:9,title:"the embryo becomes a fetus",t:1,fruit:"grape",svg:`<circle cx="30" cy="33" r="12" fill="#9b7dc8" fill-opacity="0.15"/>
     <circle cx="30" cy="33" r="10.5" fill="#9b7dc8" fill-opacity="0.72"/>
     <circle cx="30" cy="33" r="10.5" fill="none" stroke="#7a5ca8" stroke-width="0.7"/>
     <ellipse cx="25.5" cy="27.5" rx="4" ry="5" fill="white" fill-opacity="0.2"/>
     <path d="M30 21 C30 21 28 15 32 12" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-    <ellipse cx="36" cy="38" rx="2" ry="2.5" fill="#5a3c88" fill-opacity="0.2"/>`,body:"Your baby is officially a fetus. Her organs are all present, beginning their lifelong work. She is the size of a grape and already has distinct fingerprints — hers alone, forever.",nourish:"Omega-3s are building her brain right now. Walnuts, flaxseed, chia, salmon. Even a small serving of fatty fish weekly makes a measurable difference.",prompt:"Buy yourself something beautiful for your body.",sub:"A new lotion. A silk pillowcase. A robe. Your body is doing sacred work. It deserves tenderness.",jq:"One way I'm learning to be kinder to my own body is…"},
+    <ellipse cx="36" cy="38" rx="2" ry="2.5" fill="#5a3c88" fill-opacity="0.2"/>`,body:"Your baby is officially a fetus. Her organs are all present, beginning their lifelong work. She is the size of a grape and already has distinct fingerprints — hers alone, forever.",nourish:"Omega-3s are building your baby's brain right now. Walnuts, flaxseed, chia, salmon. Even a small serving of fatty fish weekly makes a measurable difference.",prompt:"Buy yourself something beautiful for your body.",sub:"A new lotion. A silk pillowcase. A robe. Your body is doing sacred work. It deserves tenderness.",jq:"One way I'm learning to be kinder to my own body is…"},
   {w:10,title:"she can swallow",t:1,fruit:"kumquat",svg:`<ellipse cx="30" cy="33" rx="10" ry="13" fill="#e8943a" fill-opacity="0.15"/>
     <ellipse cx="30" cy="33" rx="8.5" ry="11.5" fill="#e8943a" fill-opacity="0.72"/>
     <ellipse cx="30" cy="33" rx="8.5" ry="11.5" fill="none" stroke="#c87018" stroke-width="0.7"/>
@@ -1333,7 +1374,7 @@ const WEEKS = [
     <ellipse cx="30" cy="34" rx="14" ry="17" fill="none" stroke="#a05a52" stroke-width="0.7"/>
     <ellipse cx="25" cy="27" rx="4.5" ry="6" fill="white" fill-opacity="0.28"/>
     <path d="M30 16 C30 16 28 8 33 5" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-    <ellipse cx="37" cy="40" rx="2.5" ry="3.5" fill="#a05a52" fill-opacity="0.2"/>`,body:"Your baby is the size of a plum — about 2 inches. Fingers are no longer webbed. Reflexes are beginning. The face is unmistakably human, tiny eyelids fused shut, dreaming in the dark of you.",nourish:"Folate-rich foods remain essential — dark leafy greens, lentils, avocado. Every bite is a love letter to her formation.",prompt:"Make a voice memo to your baby.",sub:"Tell her who is waiting to meet her — by name, by heart, by the way you already love her.",jq:"Something I want her to know about the world she's coming into…"},
+    <ellipse cx="37" cy="40" rx="2.5" ry="3.5" fill="#a05a52" fill-opacity="0.2"/>`,body:"Your baby is the size of a plum — about 2 inches. Fingers are no longer webbed. Reflexes are beginning. The face is unmistakably human, tiny eyelids fused shut, dreaming in the dark of you.",nourish:"Folate-rich foods remain essential — dark leafy greens, lentils, avocado. Every bite is a love letter to her formation.",prompt:"Make a voice memo to your baby.",sub:"Tell your baby who is waiting to meet them — by name, by heart, by the way you already love them.",jq:"Something I want my baby to know about the world they're coming into…"},
   {w:13,title:"first trimester complete",t:1,fruit:"lemon",svg:`<ellipse cx="30" cy="31" rx="15" ry="18" fill="#e8d060" fill-opacity="0.18"/>
     <ellipse cx="30" cy="31" rx="13.5" ry="16.5" fill="#e8d060" fill-opacity="0.72"/>
     <ellipse cx="30" cy="31" rx="13.5" ry="16.5" fill="none" stroke="#c8b030" stroke-width="0.7"/>
@@ -1346,21 +1387,21 @@ const WEEKS = [
     <ellipse cx="30" cy="34" rx="13.5" ry="14.5" fill="none" stroke="#c88050" stroke-width="0.7"/>
     <ellipse cx="24.5" cy="27" rx="4.5" ry="6" fill="white" fill-opacity="0.3"/>
     <path d="M30 18 C30 18 29 12 32 10" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-    <line x1="30" y1="19" x2="30" y2="47" stroke="#c88050" stroke-width="0.5" stroke-opacity="0.25"/>`,body:"Welcome to the second trimester. Energy is returning. Nausea may be lifting. Your baby is the size of a peach, and her face can now squint, frown, and grimace. She is practicing expression.",nourish:"Lean into protein — it builds her muscles and keeps your blood sugar stable. Eggs, chicken, legumes, and Greek yogurt are your allies.",prompt:"Plan a babymoon — even a simple one.",sub:"A weekend away, a staycation, or one long slow dinner. Intentional rest is a gift to both of you.",jq:"A memory I want to make before she arrives is…"},
+    <line x1="30" y1="19" x2="30" y2="47" stroke="#c88050" stroke-width="0.5" stroke-opacity="0.25"/>`,body:"Welcome to the second trimester. Energy is returning. Nausea may be lifting. Your baby is the size of a peach, and her face can now squint, frown, and grimace. She is practicing expression.",nourish:"Lean into protein — it builds your baby's muscles and keeps your blood sugar stable. Eggs, chicken, legumes, and Greek yogurt are your allies.",prompt:"Plan a babymoon — even a simple one.",sub:"A weekend away, a staycation, or one long slow dinner. Intentional rest is a gift to both of you.",jq:"A memory I want to make before they arrive is…"},
   {w:15,title:"she hears you now",t:2,fruit:"apple",svg:`<ellipse cx="30" cy="35" rx="16" ry="17" fill="#d45050" fill-opacity="0.15"/>
     <ellipse cx="30" cy="35" rx="14.5" ry="15.5" fill="#d45050" fill-opacity="0.65"/>
     <ellipse cx="30" cy="35" rx="14.5" ry="15.5" fill="none" stroke="#a83030" stroke-width="0.7"/>
     <ellipse cx="23.5" cy="27" rx="4.5" ry="6.5" fill="white" fill-opacity="0.25"/>
     <path d="M30 18 C30 18 28 11 31 9" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>
     <path d="M30 18 C30 18 32 13 36 14" stroke="#b0bba6" stroke-width="1" stroke-linecap="round" fill="none"/>
-    <ellipse cx="38" cy="42" rx="2.5" ry="3.5" fill="#a83030" fill-opacity="0.18"/>`,body:"Your baby can hear. Muffled sounds are reaching her now — your heartbeat, your voice, the hum of the world outside. She is the size of an apple and she is listening.",nourish:"DHA supports auditory development. Wild salmon, sardines, or a prenatal DHA supplement. Her hearing is literally being built by what you eat.",prompt:"Read aloud to her.",sub:"A poem. A picture book. A chapter you love. Her ears are open. Let your voice be the first story she ever hears.",jq:"If I could read her one book forever, it would be… because…"},
+    <ellipse cx="38" cy="42" rx="2.5" ry="3.5" fill="#a83030" fill-opacity="0.18"/>`,body:"Your baby can hear. Muffled sounds are reaching her now — your heartbeat, your voice, the hum of the world outside. She is the size of an apple and she is listening.",nourish:"DHA supports auditory development. Wild salmon, sardines, or a prenatal DHA supplement. Your baby's hearing is literally being built by what you eat.",prompt:"Read aloud to your baby.",sub:"A poem. A picture book. A chapter you love. Those ears are open. Let your voice be the first story they ever hear.",jq:"If I could read my baby one book forever, it would be… because…"},
   {w:16,title:"she's beginning to see light",t:2,fruit:"avocado",svg:`<ellipse cx="30" cy="34" rx="13" ry="18" fill="#6b8c52" fill-opacity="0.18"/>
     <ellipse cx="30" cy="34" rx="11.5" ry="16.5" fill="#6b8c52" fill-opacity="0.62"/>
     <ellipse cx="30" cy="34" rx="11.5" ry="16.5" fill="none" stroke="#4a6a32" stroke-width="0.7"/>
     <ellipse cx="30" cy="36" rx="7" ry="9" fill="#c9a96e" fill-opacity="0.55"/>
     <ellipse cx="30" cy="36" rx="4" ry="5.5" fill="#a07848" fill-opacity="0.4"/>
     <ellipse cx="26" cy="26" rx="3" ry="4.5" fill="white" fill-opacity="0.25"/>
-    <path d="M30 16 C30 16 28 10 31 8" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Your baby is the size of an avocado and is beginning to sense light. Her skeleton is hardening from cartilage to bone. Her ears have migrated to their final position.",nourish:"Calcium and vitamin D together are building her skeleton. Fortified milks, salmon, eggs. Bone is being made.",prompt:"Take a belly photo in beautiful light.",sub:"Window light. Golden hour. A mirror in the morning. Document this — not to share, but to remember.",jq:"Something beautiful I've noticed about my changing body is…"},
+    <path d="M30 16 C30 16 28 10 31 8" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Your baby is the size of an avocado and is beginning to sense light. Her skeleton is hardening from cartilage to bone. Her ears have migrated to their final position.",nourish:"Calcium and vitamin D together are building your baby's skeleton. Fortified milks, salmon, eggs. Bone is being made.",prompt:"Take a belly photo in beautiful light.",sub:"Window light. Golden hour. A mirror in the morning. Document this — not to share, but to remember.",jq:"Something beautiful I've noticed about my changing body is…"},
   {w:17,title:"her movements are coming",t:2,fruit:"pear",svg:`<ellipse cx="30" cy="37" rx="14" ry="16" fill="#a8c878" fill-opacity="0.18"/>
     <ellipse cx="30" cy="37" rx="12.5" ry="14.5" fill="#a8c878" fill-opacity="0.68"/>
     <ellipse cx="30" cy="37" rx="12.5" ry="14.5" fill="none" stroke="#80a050" stroke-width="0.7"/>
@@ -1373,13 +1414,13 @@ const WEEKS = [
     <ellipse cx="30" cy="31" rx="17" ry="9.5" fill="none" stroke="#a86008" stroke-width="0.7" transform="rotate(-8 30 31)"/>
     <ellipse cx="22" cy="27" rx="5" ry="3.5" fill="white" fill-opacity="0.28" transform="rotate(-8 22 27)"/>
     <path d="M42 22 C44 20 46 20 46 22" stroke="#9aac95" stroke-width="1.2" stroke-linecap="round" fill="none"/>
-    <path d="M17 38 C15 40 13 39 14 37" stroke="#9aac95" stroke-width="1.2" stroke-linecap="round" fill="none"/>`,body:"The anatomy scan — a profound window into who she is becoming. Every organ, every limb, every chamber of her heart seen. She is the size of a sweet potato and is fully, breathtakingly formed.",nourish:"Iron needs are highest in the second trimester. Red meat, spinach with lemon, fortified cereals. Fatigue is often your body's iron cry.",prompt:"Frame your ultrasound photo.",sub:"Print it. Put it somewhere you pass every day. Let yourself stop and look. This is her face before you've met her.",jq:"When I saw her on the ultrasound, I felt…"},
+    <path d="M17 38 C15 40 13 39 14 37" stroke="#9aac95" stroke-width="1.2" stroke-linecap="round" fill="none"/>`,body:"The anatomy scan — a profound window into who she is becoming. Every organ, every limb, every chamber of her heart seen. She is the size of a sweet potato and is fully, breathtakingly formed.",nourish:"Iron needs are highest in the second trimester. Red meat, spinach with lemon, fortified cereals. Fatigue is often your body's iron cry.",prompt:"Frame your ultrasound photo.",sub:"Print it. Put it somewhere you pass every day. Let yourself stop and look. This is their face before you've met them.",jq:"When I saw my baby on the ultrasound, I felt…"},
   {w:19,title:"she dreams",t:2,fruit:"mango",svg:`<ellipse cx="30" cy="33" rx="16" ry="19" fill="#f0a840" fill-opacity="0.18"/>
     <ellipse cx="30" cy="33" rx="14.5" ry="17.5" fill="#f0a840" fill-opacity="0.68"/>
     <ellipse cx="30" cy="33" rx="14.5" ry="17.5" fill="none" stroke="#d08010" stroke-width="0.7"/>
     <ellipse cx="24" cy="25" rx="5" ry="7" fill="white" fill-opacity="0.3"/>
     <path d="M30 14 C30 14 28 8 33 5" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-    <ellipse cx="38" cy="42" rx="3" ry="4" fill="#d08010" fill-opacity="0.18"/>`,body:"A waxy protective coating is forming over her skin. Her brain is creating millions of nerve cells. She may already be entering REM cycles — she may be dreaming. She is the size of a mango.",nourish:"Choline supports brain development. One egg yolk daily is one of the simplest and most powerful things you can do for her forming mind.",prompt:"Write down what you dream about.",sub:"For one week, keep a notebook beside your bed. Your subconscious is processing this enormous becoming. What is it saying?",jq:"A dream I've had recently, and what I think it means…"},
+    <ellipse cx="38" cy="42" rx="3" ry="4" fill="#d08010" fill-opacity="0.18"/>`,body:"A waxy protective coating is forming over her skin. Her brain is creating millions of nerve cells. She may already be entering REM cycles — she may be dreaming. She is the size of a mango.",nourish:"Choline supports brain development. One egg yolk daily is one of the simplest and most powerful things you can do for your baby's forming mind.",prompt:"Write down what you dream about.",sub:"For one week, keep a notebook beside your bed. Your subconscious is processing this enormous becoming. What is it saying?",jq:"A dream I've had recently, and what I think it means…"},
   {w:20,title:"the halfway point",t:2,fruit:"banana",svg:`<path d="M15 38 C13 28 16 18 24 13 C32 8 40 10 44 18 C46 23 44 28 40 30 C36 32 30 30 26 28 C22 26 19 24 17 26 C15 28 15 33 15 38 Z" fill="#f0d050" fill-opacity="0.18"/>
     <path d="M16 37 C14 27 17 17 25 12 C33 7 41 9 45 17 C47 22 45 27 41 30 C37 32 31 31 27 29 C23 27 20 25 18 27 C16 29 16 33 16 37 Z" fill="#f0d050" fill-opacity="0.78"/>
     <path d="M16 37 C14 27 17 17 25 12 C33 7 41 9 45 17 C47 22 45 27 41 30 C37 32 31 31 27 29 C23 27 20 25 18 27 C16 29 16 33 16 37 Z" fill="none" stroke="#c8a820" stroke-width="0.8"/>
@@ -1393,7 +1434,7 @@ const WEEKS = [
     <path d="M27 20 C26 27 25 35 26 40" stroke="white" stroke-width="1.5" stroke-opacity="0.3" stroke-linecap="round"/>
     <path d="M28 14 C26 9 23 7 21 8" stroke="#9aac95" stroke-width="1.5" stroke-linecap="round" fill="none"/>
     <path d="M30 13 C30 8 30 6 30 4" stroke="#9aac95" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-    <path d="M32 14 C34 9 37 7 39 8" stroke="#9aac95" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Your baby is swallowing amniotic fluid — and tasting everything you eat. Strong flavors she experiences now may become preferences after birth. She is the size of a carrot.",nourish:"Eat the vegetables you want her to love. Garlic, carrots, broccoli, herbs. Flavor is transmitted through amniotic fluid. You are introducing her to a world of taste.",prompt:"Cook a meal completely from scratch.",sub:"Slow down in the kitchen. Let cooking become an act of devotion this week.",jq:"A food memory from my own childhood that I want to share with her…"},
+    <path d="M32 14 C34 9 37 7 39 8" stroke="#9aac95" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"Your baby is swallowing amniotic fluid — and tasting everything you eat. Strong flavors she experiences now may become preferences after birth. She is the size of a carrot.",nourish:"Eat the vegetables you want your baby to love. Garlic, carrots, broccoli, herbs. Flavor is transmitted through amniotic fluid. You are introducing them to a world of taste.",prompt:"Cook a meal completely from scratch.",sub:"Slow down in the kitchen. Let cooking become an act of devotion this week.",jq:"A food memory from my own childhood that I want to pass on…"},
   {w:22,title:"lips and lashes",t:2,fruit:"papaya",svg:`<ellipse cx="30" cy="31" rx="14" ry="19" fill="#f0904a" fill-opacity="0.18"/>
     <ellipse cx="30" cy="31" rx="12.5" ry="17.5" fill="#f0904a" fill-opacity="0.65"/>
     <ellipse cx="30" cy="31" rx="12.5" ry="17.5" fill="none" stroke="#d06820" stroke-width="0.7"/>
@@ -1409,7 +1450,7 @@ const WEEKS = [
     <line x1="30" y1="14.5" x2="30" y2="45.5" stroke="#d08878" stroke-width="0.4" stroke-opacity="0.3"/>
     <line x1="14.5" y1="30" x2="45.5" y2="30" stroke="#d08878" stroke-width="0.4" stroke-opacity="0.3"/>
     <line x1="19" y1="19" x2="41" y2="41" stroke="#d08878" stroke-width="0.4" stroke-opacity="0.2"/>
-    <line x1="41" y1="19" x2="19" y2="41" stroke="#d08878" stroke-width="0.4" stroke-opacity="0.2"/>`,body:"Your baby can recognize your voice and may respond with movement when she hears it. Her inner ear is complete. She already knows you.",nourish:"Vitamin C supports collagen production. Citrus, strawberries, bell peppers, kiwi. Everything you eat is still building her.",prompt:"Sing to her.",sub:"It doesn't matter if you can carry a tune. She doesn't know the difference. She knows your voice. Sing her something. Make it yours.",jq:"A song I find myself humming lately, and what it makes me feel…"},
+    <line x1="41" y1="19" x2="19" y2="41" stroke="#d08878" stroke-width="0.4" stroke-opacity="0.2"/>`,body:"Your baby can recognize your voice and may respond with movement when she hears it. Her inner ear is complete. She already knows you.",nourish:"Vitamin C supports collagen production. Citrus, strawberries, bell peppers, kiwi. Everything you eat is still building her.",prompt:"Sing to your baby.",sub:"It doesn't matter if you can carry a tune. They don't know the difference. They know your voice. Sing them something. Make it yours.",jq:"A song I find myself humming lately, and what it makes me feel…"},
   {w:24,title:"viability",t:2,fruit:"corn",svg:`<path d="M30 12 C27 12 23 15 23 22 L23 43 C23 47 37 47 37 43 L37 22 C37 15 33 12 30 12Z" fill="#f0d060" fill-opacity="0.18"/>
     <path d="M30 13 C27.5 13 24 16 24 22 L24 43 C24 46.5 36 46.5 36 43 L36 22 C36 16 32.5 13 30 13Z" fill="#f0d060" fill-opacity="0.72"/>
     <path d="M30 13 C27.5 13 24 16 24 22 L24 43 C24 46.5 36 46.5 36 43 L36 22 C36 16 32.5 13 30 13Z" fill="none" stroke="#c8a820" stroke-width="0.7"/>
@@ -1418,7 +1459,7 @@ const WEEKS = [
     <circle cx="26.5" cy="35" r="2.2" fill="#d4a820" fill-opacity="0.55"/><circle cx="30" cy="35" r="2.2" fill="#d4a820" fill-opacity="0.55"/><circle cx="33.5" cy="35" r="2.2" fill="#d4a820" fill-opacity="0.55"/>
     <circle cx="25.5" cy="24" r="0.8" fill="white" fill-opacity="0.5"/><circle cx="29" cy="24" r="0.8" fill="white" fill-opacity="0.5"/><circle cx="32.5" cy="24" r="0.8" fill="white" fill-opacity="0.5"/>
     <path d="M24 18 C22 16 20 14 21 12" stroke="#f0d060" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-    <path d="M36 18 C38 16 40 14 39 12" stroke="#f0d060" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"This week marks viability — the point at which your baby could survive outside the womb with medical support. She is the size of an ear of corn, and her lungs are developing surfactant.",nourish:"Continue DHA for lung development alongside brain development. Her lungs are practicing breathing movements — inhaling amniotic fluid to prepare for the real thing.",prompt:"Tour the hospital or birth center.",sub:"Walk where you will walk. Find the entrance. Let it become familiar before the day arrives. Familiarity calms fear.",jq:"My vision for the day she arrives — what I hope it feels like…"},
+    <path d="M36 18 C38 16 40 14 39 12" stroke="#f0d060" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,body:"This week marks viability — the point at which your baby could survive outside the womb with medical support. She is the size of an ear of corn, and her lungs are developing surfactant.",nourish:"Continue DHA for lung development alongside brain development. Her lungs are practicing breathing movements — inhaling amniotic fluid to prepare for the real thing.",prompt:"Tour the hospital or birth center.",sub:"Walk where you will walk. Find the entrance. Let it become familiar before the day arrives. Familiarity calms fear.",jq:"My vision for the day my baby arrives — what I hope it feels like…"},
   {w:25,title:"she is gaining weight",t:2,fruit:"rutabaga",svg:`<ellipse cx="30" cy="33" rx="17" ry="15" fill="#d4c098" fill-opacity="0.18"/>
     <ellipse cx="30" cy="33" rx="15.5" ry="13.5" fill="#d4c098" fill-opacity="0.72"/>
     <ellipse cx="30" cy="33" rx="15.5" ry="13.5" fill="none" stroke="#a89870" stroke-width="0.7"/>
@@ -1427,14 +1468,14 @@ const WEEKS = [
     <ellipse cx="30" cy="22" rx="8" ry="4" fill="none" stroke="#a89870" stroke-width="0.5"/>
     <path d="M25 19 C24 16 23 14 24 12" stroke="#9aac95" stroke-width="1.2" stroke-linecap="round" fill="none"/>
     <path d="M30 18 C30 15 30 13 30 11" stroke="#9aac95" stroke-width="1.2" stroke-linecap="round" fill="none"/>
-    <path d="M35 19 C36 16 37 14 36 12" stroke="#9aac95" stroke-width="1.2" stroke-linecap="round" fill="none"/>`,body:"Your baby is filling out — adding fat beneath her skin that will give her the soft, round cheeks you will one day kiss endlessly. She is the size of a rutabaga. She looks, truly, like a baby now.",nourish:"Protein helps build the baby fat that will keep her warm after birth. Aim for 70-100g of protein daily.",prompt:"Write a list of 10 things you love about your partner.",sub:"Share it with them. Remember: you are building a family together. This love is the foundation.",jq:"What I love most about the way my partner has shown up in this season…"},
+    <path d="M35 19 C36 16 37 14 36 12" stroke="#9aac95" stroke-width="1.2" stroke-linecap="round" fill="none"/>`,body:"Your baby is filling out — adding fat beneath her skin that will give her the soft, round cheeks you will one day kiss endlessly. She is the size of a rutabaga. She looks, truly, like a baby now.",nourish:"Protein helps build the baby fat that will keep your little one warm after birth. Aim for 70-100g of protein daily.",prompt:"Write a list of 10 things you love about your partner.",sub:"Share it with them. Remember: you are building a family together. This love is the foundation.",jq:"What I love most about the way my partner has shown up in this season…"},
   {w:26,title:"her eyes open",t:2,fruit:"scallion",svg:`<ellipse cx="30" cy="38" rx="5" ry="8" fill="#c8d8c0" fill-opacity="0.5"/>
     <rect x="27" y="10" width="6" height="38" rx="3" fill="#9aac95" fill-opacity="0.18"/>
     <rect x="27.5" y="11" width="5" height="37" rx="2.5" fill="#9aac95" fill-opacity="0.72"/>
     <rect x="27.5" y="11" width="5" height="37" rx="2.5" fill="none" stroke="#708a6a" stroke-width="0.6"/>
     <ellipse cx="29" cy="20" rx="1.5" ry="5" fill="white" fill-opacity="0.35"/>
     <path d="M19 11 C24 8 36 8 41 11" stroke="#b0c4aa" stroke-width="2" fill="none" stroke-linecap="round"/>
-    <path d="M19 11 C24 8 36 8 41 11" stroke="#708a6a" stroke-width="0.6" fill="none" stroke-linecap="round"/>`,body:"Your baby's eyes open this week. She is seeing the dim, rose-colored light that filters through your skin. She blinks. She focuses. She is looking at the world she will soon enter.",nourish:"Lutein and zeaxanthin support her retinal development. Leafy greens — kale, spinach, collards. She is learning to see. Feed her sight.",prompt:"Declutter one space in your home.",sub:"Clear a shelf. Fold a drawer. Prepare a corner. Nesting is instinct — let it be purposeful.",jq:"The space I'm preparing for her, and what I want it to feel like…"},
+    <path d="M19 11 C24 8 36 8 41 11" stroke="#708a6a" stroke-width="0.6" fill="none" stroke-linecap="round"/>`,body:"Your baby's eyes open this week. She is seeing the dim, rose-colored light that filters through your skin. She blinks. She focuses. She is looking at the world she will soon enter.",nourish:"Lutein and zeaxanthin support your baby's retinal development. Leafy greens — kale, spinach, collards. They are learning to see. Feed their sight.",prompt:"Declutter one space in your home.",sub:"Clear a shelf. Fold a drawer. Prepare a corner. Nesting is instinct — let it be purposeful.",jq:"The space I'm preparing, and what I want it to feel like…"},
   {w:27,title:"third trimester approaches",t:2,fruit:"cauliflower",svg:`<circle cx="30" cy="29" r="15" fill="#e8e0d0" fill-opacity="0.4"/>
     <circle cx="23.5" cy="27" r="6" fill="#e0d8c8" fill-opacity="0.8"/>
     <circle cx="36.5" cy="25.5" r="6" fill="#d8d0c0" fill-opacity="0.8"/>
@@ -1453,7 +1494,7 @@ const WEEKS = [
     <ellipse cx="30" cy="20" rx="7" ry="4" fill="#4a5040" fill-opacity="0.6"/>
     <ellipse cx="30" cy="20" rx="7" ry="4" fill="none" stroke="#3e2050" stroke-width="0.5"/>
     <path d="M30 16 C30 16 28 10 33 8" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-    <ellipse cx="37" cy="42" rx="2.5" ry="3.5" fill="#3e2050" fill-opacity="0.2"/>`,body:"The final chapter begins. Your baby is the size of an eggplant — nearly 2.5 pounds. She can blink, cough, and may already have a favorite position she returns to again and again.",nourish:"Fiber becomes your best friend as digestion slows. Oats, prunes, legumes, and lots of water. Constipation is common — nourish preventatively.",prompt:"Write your birth plan.",sub:"Not to control what happens — but to clarify what you hope for. Who you want in the room. The first word you want her to hear.",jq:"My hopes for her birth day — what I'm praying it holds…"},
+    <ellipse cx="37" cy="42" rx="2.5" ry="3.5" fill="#3e2050" fill-opacity="0.2"/>`,body:"The final chapter begins. Your baby is the size of an eggplant — nearly 2.5 pounds. She can blink, cough, and may already have a favorite position she returns to again and again.",nourish:"Fiber becomes your best friend as digestion slows. Oats, prunes, legumes, and lots of water. Constipation is common — nourish preventatively.",prompt:"Write your birth plan.",sub:"Not to control what happens — but to clarify what you hope for. Who you want in the room. The first word you want your baby to hear.",jq:"My hopes for their birth day — what I'm praying it holds…"},
   {w:29,title:"her kicks are undeniable",t:3,fruit:"butternut squash",svg:`<ellipse cx="30" cy="36" rx="15" ry="17" fill="#e8b050" fill-opacity="0.18"/>
     <ellipse cx="30" cy="36" rx="13.5" ry="15.5" fill="#e8b050" fill-opacity="0.68"/>
     <ellipse cx="30" cy="36" rx="13.5" ry="15.5" fill="none" stroke="#c88820" stroke-width="0.7"/>
@@ -1461,14 +1502,14 @@ const WEEKS = [
     <ellipse cx="30" cy="22" rx="7.5" ry="9.5" fill="none" stroke="#c88820" stroke-width="0.6"/>
     <ellipse cx="25" cy="27" rx="3" ry="5" fill="white" fill-opacity="0.28"/>
     <path d="M30 12 C30 12 29 7 32 5" stroke="#b0bba6" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-    <line x1="30" y1="30" x2="30" y2="31" stroke="#c88820" stroke-width="1.5" stroke-opacity="0.4"/>`,body:"Her kicks and jabs are strong enough that others can feel them. She is the size of a butternut squash, running out of room — her movements more distinct, more purposeful, more insistent.",nourish:"Your stomach is compressed — small, frequent meals work better. Calorie-dense snacks: nut butter, avocado toast, cheese and fruit.",prompt:"Let someone else feel her kick.",sub:"A parent. A sibling. Your partner. Place their hand on your belly and wait. Watch their face change. That moment is irreplaceable.",jq:"The first time someone else felt her move, and what their face looked like…"},
+    <line x1="30" y1="30" x2="30" y2="31" stroke="#c88820" stroke-width="1.5" stroke-opacity="0.4"/>`,body:"Her kicks and jabs are strong enough that others can feel them. She is the size of a butternut squash, running out of room — her movements more distinct, more purposeful, more insistent.",nourish:"Your stomach is compressed — small, frequent meals work better. Calorie-dense snacks: nut butter, avocado toast, cheese and fruit.",prompt:"Let someone else feel your baby kick.",sub:"A parent. A sibling. Your partner. Place their hand on your belly and wait. Watch their face change. That moment is irreplaceable.",jq:"The first time someone else felt them move, and what their face looked like…"},
   {w:30,title:"ten weeks to go",t:3,fruit:"cabbage",svg:`<circle cx="30" cy="30" r="17" fill="#9aac95" fill-opacity="0.2"/>
     <circle cx="30" cy="30" r="15" fill="#9aac95" fill-opacity="0.38"/>
     <circle cx="30" cy="30" r="12" fill="#9aac95" fill-opacity="0.5"/>
     <circle cx="30" cy="30" r="8.5" fill="#b0bba6" fill-opacity="0.55"/>
     <circle cx="30" cy="30" r="5" fill="#9aac95" fill-opacity="0.65"/>
     <circle cx="25.5" cy="25.5" r="3.5" fill="white" fill-opacity="0.22"/>
-    <circle cx="30" cy="30" r="17" fill="none" stroke="#708a6a" stroke-width="0.5"/>`,body:"Ten weeks to go. Your baby weighs about 3 pounds and is the size of a cabbage. She is building her own immune system. She recognizes music you play regularly. She is in deep preparation.",nourish:"Vitamin K supports blood clotting for the birth ahead. Kale, spinach, broccoli, fermented foods. Prepare her blood — and yours — for the transition to come.",prompt:"Set up the nursery — or begin.",sub:"Even one shelf, one lamp, one soft thing folded on a chair. Begin making her space. The act of preparing is the act of welcoming.",jq:"What I've chosen for her space, and why each thing matters to me…"},
+    <circle cx="30" cy="30" r="17" fill="none" stroke="#708a6a" stroke-width="0.5"/>`,body:"Ten weeks to go. Your baby weighs about 3 pounds and is the size of a cabbage. She is building her own immune system. She recognizes music you play regularly. She is in deep preparation.",nourish:"Vitamin K supports blood clotting for the birth ahead. Kale, spinach, broccoli, fermented foods. Prepare her blood — and yours — for the transition to come.",prompt:"Set up the nursery — or begin.",sub:"Even one shelf, one lamp, one soft thing folded on a chair. Begin making their space. The act of preparing is the act of welcoming.",jq:"What I've chosen for their space, and why each thing matters to me…"},
   {w:31,title:"she processes information",t:3,fruit:"coconut",svg:`<circle cx="30" cy="30" r="16" fill="#8b6a50" fill-opacity="0.18"/>
     <circle cx="30" cy="30" r="14.5" fill="#8b6a50" fill-opacity="0.62"/>
     <circle cx="30" cy="30" r="14.5" fill="none" stroke="#6a4830" stroke-width="0.7"/>
@@ -1478,14 +1519,14 @@ const WEEKS = [
     <circle cx="36" cy="25" r="2.5" fill="#3a2e2a" fill-opacity="0.65"/>
     <circle cx="30" cy="21" r="2.5" fill="#3a2e2a" fill-opacity="0.55"/>
     <circle cx="23" cy="24.5" r="0.8" fill="white" fill-opacity="0.4"/>
-    <ellipse cx="23" cy="34" rx="4" ry="2.5" fill="#a89878" fill-opacity="0.3" transform="rotate(-20 23 34)"/>`,body:"Your baby's brain is forming trillions of connections. She processes information, feels pain, and responds to her environment. She is the size of a coconut and becoming, week by week, entirely herself.",nourish:"Choline again — now for memory formation and neural connectivity. Eggs are still the most efficient daily source. Her brain is in a sprint to the finish.",prompt:"Ask your partner to talk to her.",sub:"Have him rest his mouth near your belly and talk. Tell her his name. She will know his voice the moment she arrives.",jq:"Things I want her to know about her father before she meets him…"},
+    <ellipse cx="23" cy="34" rx="4" ry="2.5" fill="#a89878" fill-opacity="0.3" transform="rotate(-20 23 34)"/>`,body:"Your baby's brain is forming trillions of connections. She processes information, feels pain, and responds to her environment. She is the size of a coconut and becoming, week by week, entirely herself.",nourish:"Choline again — now for memory formation and neural connectivity. Eggs are still the most efficient daily source. Her brain is in a sprint to the finish.",prompt:"Ask your partner to talk to your baby.",sub:"Have them rest their mouth near your belly and talk. Your baby will know their voice the moment they arrive.",jq:"Things I want my baby to know about their other parent before they meet them…"},
   {w:32,title:"her lungs are almost ready",t:3,fruit:"jicama",svg:`<circle cx="30" cy="30" r="17" fill="#e0d8c0" fill-opacity="0.35"/>
     <circle cx="30" cy="30" r="15.5" fill="#e0d8c0" fill-opacity="0.78"/>
     <circle cx="30" cy="30" r="15.5" fill="none" stroke="#b8b098" stroke-width="0.7"/>
     <ellipse cx="23.5" cy="23.5" r="5.5" fill="white" fill-opacity="0.38"/>
     <ellipse cx="37" cy="37" rx="4" ry="5" fill="#b8b098" fill-opacity="0.2"/>
     <path d="M28 13 C27 11 26 9 27 8" stroke="#9aac95" stroke-width="1.2" stroke-linecap="round" fill="none"/>
-    <path d="M32 13 C33 11 34 9 33 8" stroke="#9aac95" stroke-width="1.2" stroke-linecap="round" fill="none"/>`,body:"She is practicing breathing. Her lungs are producing surfactant and rehearsing the breath that will announce her to the world. She is nearly 4 pounds — and almost ready.",nourish:"Iron stores are being built in her body for the first 6 months of life. Your iron intake now is her reserve then. Red meat, lentils, dark chocolate.",prompt:"Pack your hospital bag.",sub:"The soft outfit for her to come home in. Your favorite lip balm. The playlist. The snacks for your partner. Packing it is its own kind of prayer.",jq:"What I'm putting in her bag, and the story behind each thing…"},
+    <path d="M32 13 C33 11 34 9 33 8" stroke="#9aac95" stroke-width="1.2" stroke-linecap="round" fill="none"/>`,body:"She is practicing breathing. Her lungs are producing surfactant and rehearsing the breath that will announce her to the world. She is nearly 4 pounds — and almost ready.",nourish:"Iron stores are being built in her body for the first 6 months of life. Your iron intake now is her reserve then. Red meat, lentils, dark chocolate.",prompt:"Pack your hospital bag.",sub:"The soft outfit for your baby to come home in. Your favorite lip balm. The playlist. The snacks for your partner. Packing it is its own kind of prayer.",jq:"What I'm packing, and the story behind each thing…"},
   {w:33,title:"she is gaining an ounce a day",t:3,fruit:"pineapple",svg:`<ellipse cx="30" cy="37" rx="14" ry="17" fill="#f0c840" fill-opacity="0.18"/>
     <ellipse cx="30" cy="37" rx="12.5" ry="15.5" fill="#f0c840" fill-opacity="0.72"/>
     <ellipse cx="30" cy="37" rx="12.5" ry="15.5" fill="none" stroke="#c8a010" stroke-width="0.7"/>
@@ -1510,7 +1551,7 @@ const WEEKS = [
     <path d="M19 24 Q30 19 41 24" stroke="#d09858" stroke-width="0.6" fill="none" stroke-opacity="0.5"/>
     <path d="M18 28 Q30 23 42 28" stroke="#d09858" stroke-width="0.6" fill="none" stroke-opacity="0.4"/>
     <path d="M18 32 Q30 27 42 32" stroke="#d09858" stroke-width="0.6" fill="none" stroke-opacity="0.4"/>
-    <path d="M19 36 Q30 31 41 36" stroke="#d09858" stroke-width="0.6" fill="none" stroke-opacity="0.3"/>`,body:"She is the size of a cantaloupe — about 5 pounds — and considered late preterm. Her immune system is receiving final antibodies from you. She is in position or getting there.",nourish:"Red raspberry leaf tea is traditionally used in late pregnancy to tone the uterus. Speak to your OB first, but this is a gentle ritual of preparation.",prompt:"Write your baby a welcome letter.",sub:"What you wish for her life. What you promise her. What you know, and what you don't. Read it to her on her first birthday.",jq:"What I most want her to know about the family she is being born into…"},
+    <path d="M19 36 Q30 31 41 36" stroke="#d09858" stroke-width="0.6" fill="none" stroke-opacity="0.3"/>`,body:"She is the size of a cantaloupe — about 5 pounds — and considered late preterm. Her immune system is receiving final antibodies from you. She is in position or getting there.",nourish:"Red raspberry leaf tea is traditionally used in late pregnancy to tone the uterus. Speak to your OB first, but this is a gentle ritual of preparation.",prompt:"Write your baby a welcome letter.",sub:"What you wish for their life. What you promise her. What you know, and what you don't. Read it to her on her first birthday.",jq:"What I most want my baby to know about the family they are being born into…"},
   {w:35,title:"she is fully formed",t:3,fruit:"honeydew",svg:`<ellipse cx="30" cy="30" rx="18" ry="16" fill="#b8d8a0" fill-opacity="0.18"/>
     <ellipse cx="30" cy="30" rx="16.5" ry="14.5" fill="#b8d8a0" fill-opacity="0.65"/>
     <ellipse cx="30" cy="30" rx="16.5" ry="14.5" fill="none" stroke="#80a860" stroke-width="0.7"/>
@@ -1534,7 +1575,7 @@ const WEEKS = [
     <path d="M18 26 Q30 21 42 26" stroke="#909878" stroke-width="0.5" fill="none" stroke-opacity="0.35"/>
     <path d="M17 30 Q30 25 43 30" stroke="#909878" stroke-width="0.5" fill="none" stroke-opacity="0.35"/>
     <path d="M18 34 Q30 29 42 34" stroke="#909878" stroke-width="0.5" fill="none" stroke-opacity="0.3"/>
-    <ellipse cx="39" cy="37" rx="3" ry="4" fill="#909878" fill-opacity="0.18"/>`,body:"Full term. She is ready. You are ready. She weighs between 6 and 7 pounds. Her brain is still developing — as it will for years — but everything essential is complete. She is whole.",nourish:"Eat what sounds good. Nourish yourself with things you love. You are in the final days of carrying her — eat freely, slowly, gratefully.",prompt:"Prepare a freezer meal for after her arrival.",sub:"Cook something warm and sustaining. Fill the freezer with future kindness to yourself. You will thank yourself on day five.",jq:"Things I'm doing to prepare our home and hearts for her arrival…"},
+    <ellipse cx="39" cy="37" rx="3" ry="4" fill="#909878" fill-opacity="0.18"/>`,body:"Full term. She is ready. You are ready. She weighs between 6 and 7 pounds. Her brain is still developing — as it will for years — but everything essential is complete. She is whole.",nourish:"Eat what sounds good. Nourish yourself with things you love. You are in the final days of carrying her — eat freely, slowly, gratefully.",prompt:"Prepare a freezer meal for after her arrival.",sub:"Cook something warm and sustaining. Fill the freezer with future kindness to yourself. You will thank yourself on day five.",jq:"Things I'm doing to prepare our home and hearts for their arrival…"},
   {w:38,title:"any day now",t:3,fruit:"leek",svg:`<rect x="26.5" y="9" width="7" height="41" rx="3.5" fill="#9aac78" fill-opacity="0.18"/>
     <rect x="27" y="10" width="6" height="40" rx="3" fill="#9aac78" fill-opacity="0.72"/>
     <rect x="27" y="10" width="6" height="40" rx="3" fill="none" stroke="#708a50" stroke-width="0.6"/>
@@ -1557,7 +1598,7 @@ const WEEKS = [
     <circle cx="27" cy="33" r="1.5" fill="#2a1f1c" fill-opacity="0.5"/>
     <circle cx="33" cy="33" r="1.5" fill="#2a1f1c" fill-opacity="0.5"/>
     <path d="M14 26 Q30 21 46 26" stroke="#286838" stroke-width="0.8" fill="none" stroke-opacity="0.4"/>
-    <path d="M13 30 Q30 25 47 30" stroke="#286838" stroke-width="0.8" fill="none" stroke-opacity="0.3"/>`,body:"She is the size of a watermelon. Curled into herself, waiting. You are fully ripened to readiness in ways invisible but real. This is the eve of everything.",nourish:"If labor has not begun, eat a warm, grounding meal. Something with protein and fat. Your body will need fuel for the work ahead. Feed it like the athlete you are.",prompt:"Have one last date night, just the two of you.",sub:"Go to the restaurant you love. Stay up too late. Laugh. Hold hands. Remember who you are to each other before you become parents.",jq:"The last night before she came, we…"},
+    <path d="M13 30 Q30 25 47 30" stroke="#286838" stroke-width="0.8" fill="none" stroke-opacity="0.3"/>`,body:"She is the size of a watermelon. Curled into herself, waiting. You are fully ripened to readiness in ways invisible but real. This is the eve of everything.",nourish:"If labor has not begun, eat a warm, grounding meal. Something with protein and fat. Your body will need fuel for the work ahead. Feed it like the athlete you are.",prompt:"Have one last date night, just the two of you.",sub:"Go to the restaurant you love. Stay up too late. Laugh. Hold hands. Remember who you are to each other before you become parents.",jq:"The last night before they arrived, we…"},
   {w:40,title:"she is here",t:3,fruit:"small pumpkin",svg:`<ellipse cx="30" cy="33" rx="18" ry="16" fill="#e87030" fill-opacity="0.18"/>
     <ellipse cx="24" cy="33" rx="8" ry="13" fill="#e87030" fill-opacity="0.6"/>
     <ellipse cx="30" cy="33" rx="9" ry="14" fill="#e87030" fill-opacity="0.72"/>
@@ -1569,7 +1610,7 @@ const WEEKS = [
     <path d="M32 11 C34 9 37 9 38 10" stroke="#9aac95" stroke-width="1.2" fill="none" stroke-linecap="round"/>
     <line x1="24" y1="19" x2="24" y2="47" stroke="#c05010" stroke-width="0.5" stroke-opacity="0.3"/>
     <line x1="30" y1="18" x2="30" y2="49" stroke="#c05010" stroke-width="0.5" stroke-opacity="0.3"/>
-    <line x1="36" y1="19" x2="36" y2="47" stroke="#c05010" stroke-width="0.5" stroke-opacity="0.3"/>`,body:"She is here, or she is moments away. You have carried her through 40 weeks of wonder, change, and love. She is the size of a small pumpkin. She is everything. She is yours.",nourish:"In the days after birth, you will need warm, nourishing foods. Bone broths, oatmeal, soups, healthy fats. Let people feed you. You have earned every bite.",prompt:"Write the story of her birth.",sub:"Where you were when labor began. What the room looked like. The first time you saw her face. Write it before it fades — because it will.",jq:"The moment she arrived, the very first thing I thought was…"},
+    <line x1="36" y1="19" x2="36" y2="47" stroke="#c05010" stroke-width="0.5" stroke-opacity="0.3"/>`,body:"She is here, or she is moments away. You have carried her through 40 weeks of wonder, change, and love. She is the size of a small pumpkin. She is everything. She is yours.",nourish:"In the days after birth, you will need warm, nourishing foods. Bone broths, oatmeal, soups, healthy fats. Let people feed you. You have earned every bite.",prompt:"Write the story of her birth.",sub:"Where you were when labor began. What the room looked like. The first time you saw their face. Write it before it fades — because it will.",jq:"The moment they arrived, the very first thing I thought was…"},
 ];
 
 // ─── APP STATE ───────────────────────────────────────────────────────────────
@@ -1591,8 +1632,9 @@ function saveState() {
 
 function calcWeek(dueDateStr) {
   if (!dueDateStr) return 12;
-  const due = new Date(dueDateStr);
-  const now = new Date();
+  const parts = dueDateStr.split('-');
+  const due = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+  const now = new Date(); now.setHours(0,0,0,0);
   const msLeft = due - now;
   const weeksLeft = msLeft / (7 * 24 * 60 * 60 * 1000);
   const week = Math.round(40 - weeksLeft);
