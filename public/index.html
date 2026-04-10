@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>BLOOM App</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1054,6 +1055,22 @@ html, body {
 </head>
 <body>
 
+<!-- ════ AUTH ════ -->
+<div class="screen" id="screen-auth">
+  <div style="background:linear-gradient(160deg,#fdf8f2 0%,#f5ddd5 45%,#fbeee6 100%);height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2.5rem 2rem;text-align:center;">
+    <div class="ob-logo" style="font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:300;color:#b86d65;line-height:1;margin-bottom:.2rem">bloom</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:#8a7a72;margin-bottom:2.5rem">because these weeks deserve to be remembered</div>
+    <div id="auth-error" style="color:#b86d65;font-size:.8rem;margin-bottom:1rem;display:none;font-family:'Cormorant Garamond',serif;font-style:italic"></div>
+    <div class="ob-input-wrap" style="display:flex;flex-direction:column;gap:.9rem;width:100%;max-width:320px;margin:0 auto 1.5rem">
+      <input class="ob-input" id="auth-email" type="email" placeholder="your email" autocomplete="email"/>
+      <input class="ob-input" id="auth-password" type="password" placeholder="password" autocomplete="current-password"/>
+    </div>
+    <button class="btn-primary" onclick="signIn()" style="margin-bottom:.9rem;width:100%;max-width:320px">Begin my journey</button>
+    <button class="btn-primary" onclick="signUp()" style="background:transparent;border:1px solid #b86d65;color:#b86d65;box-shadow:none;width:100%;max-width:320px">Create account</button>
+    <p style="font-size:.65rem;color:#b8a89e;margin-top:1.2rem;font-family:'Cormorant Garamond',serif;font-style:italic">Your story is safe and private.</p>
+  </div>
+</div>
+
 <!-- ════ ONBOARDING ════ -->
 <div class="screen active" id="screen-onboard">
   <div class="ob-logo">bloom</div>
@@ -1614,6 +1631,13 @@ const WEEKS = [
 ];
 
 // ─── APP STATE ───────────────────────────────────────────────────────────────
+// ─── SUPABASE ────────────────────────────────────────────────────────────────
+const SUPA_URL = 'https://uncgolzzdthxqcnxjmtk.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVuY2dvbHp6ZHRoeHFjbnhqbXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3ODk2NjUsImV4cCI6MjA5MTM2NTY2NX0.MP2zf2OxnsFGpCFE4y21vA32zh6pOLGRYYYqUAcquss';
+const supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+let currentUser = null;
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
 let state = {
   name: '', dueDate: null, currentWeek: 12,
   scratchedWeeks: {}, journals: {}, gratitude: {}
@@ -1628,6 +1652,85 @@ function loadState() {
 
 function saveState() {
   try { localStorage.setItem('bloom_state', JSON.stringify(state)); } catch(e) {}
+  if (currentUser) syncToSupabase();
+}
+
+// ─── SUPABASE SYNC ───────────────────────────────────────────────────────────
+async function syncToSupabase() {
+  if (!currentUser) return;
+  try {
+    await supa.from('profiles').upsert({
+      id: currentUser.id,
+      name: state.name,
+      due_date: state.dueDate,
+      current_week: state.currentWeek,
+      updated_at: new Date().toISOString()
+    });
+  } catch(e) { console.log('Sync error:', e); }
+}
+
+async function loadFromSupabase() {
+  if (!currentUser) return false;
+  try {
+    const { data: profile } = await supa.from('profiles').select('*').eq('id', currentUser.id).single();
+    if (profile && profile.name) {
+      state.name = profile.name;
+      state.dueDate = profile.due_date;
+      state.currentWeek = profile.current_week || calcWeek(profile.due_date) || 12;
+    }
+
+    const { data: scratches } = await supa.from('scratched_weeks').select('week').eq('user_id', currentUser.id);
+    if (scratches) scratches.forEach(s => state.scratchedWeeks[s.week] = true);
+
+    const { data: journals } = await supa.from('journals').select('week, content').eq('user_id', currentUser.id);
+    if (journals) journals.forEach(j => state.journals[j.week] = j.content);
+
+    const { data: gratitude } = await supa.from('gratitude').select('week, line1, line2, line3').eq('user_id', currentUser.id);
+    if (gratitude) gratitude.forEach(g => state.gratitude[g.week] = { 1: g.line1, 2: g.line2, 3: g.line3 });
+
+    saveState();
+    return !!profile?.name;
+  } catch(e) { console.log('Load error:', e); return false; }
+}
+
+async function saveScratch(week) {
+  if (!currentUser) return;
+  try { await supa.from('scratched_weeks').upsert({ user_id: currentUser.id, week }); } catch(e) {}
+}
+
+async function saveJournalToCloud(week, content) {
+  if (!currentUser) return;
+  try {
+    await supa.from('journals').upsert({
+      user_id: currentUser.id, week, content, updated_at: new Date().toISOString()
+    });
+  } catch(e) {}
+}
+
+async function saveGratitudeToCloud(week, line1, line2, line3) {
+  if (!currentUser) return;
+  try {
+    await supa.from('gratitude').upsert({
+      user_id: currentUser.id, week, line1, line2, line3, updated_at: new Date().toISOString()
+    });
+  } catch(e) {}
+}
+
+async function saveSageToCloud(role, content) {
+  if (!currentUser) return;
+  try { await supa.from('sage_conversations').insert({ user_id: currentUser.id, role, content }); } catch(e) {}
+}
+
+async function loadSageFromCloud() {
+  if (!currentUser) return [];
+  try {
+    const { data } = await supa.from('sage_conversations')
+      .select('role, content')
+      .eq('user_id', currentUser.id)
+      .order('created_at', { ascending: true })
+      .limit(30);
+    return data || [];
+  } catch(e) { return []; }
 }
 
 function calcWeek(dueDateStr) {
@@ -1642,25 +1745,72 @@ function calcWeek(dueDateStr) {
 }
 
 // ─── ONBOARDING ──────────────────────────────────────────────────────────────
-function startApp() {
-  const name = document.getElementById('ob-name').value.trim() || 'Mama';
+async function startApp() {
+  const name = document.getElementById('ob-name').value.trim();
   const due = document.getElementById('ob-due').value.trim();
+  if (!name) { document.getElementById('ob-name').style.borderColor='var(--rose)'; document.getElementById('ob-name').focus(); return; }
+  if (!due) { document.getElementById('ob-due').style.borderColor='var(--rose)'; document.getElementById('ob-due').focus(); return; }
   state.name = name;
-  state.dueDate = due || null;
+  state.dueDate = due;
   state.currentWeek = calcWeek(due) || 12;
   saveState();
-  initApp();
+  if (currentUser) await syncToSupabase();
+  document.getElementById('bottomNav').style.display = 'flex';
+  buildHomeScreen(); switchTab('home'); updateProfileScreen();
 }
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
-function initApp() {
-  loadState();
-  if (!state.name) { showScreen('onboard'); return; }
-
+async function initApp() {
+  // Check Supabase session first
+  const { data: { session } } = await supa.auth.getSession();
+  if (session) {
+    currentUser = session.user;
+    const hasProfile = await loadFromSupabase();
+    if (!hasProfile) { showScreen('onboard'); return; }
+  } else {
+    loadState();
+    if (!state.name) { showScreen('auth'); return; }
+  }
   document.getElementById('bottomNav').style.display = 'flex';
   buildHomeScreen();
   switchTab('home');
   updateProfileScreen();
+}
+
+// ─── AUTH ────────────────────────────────────────────────────────────────────
+async function signIn() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value.trim();
+  const err = document.getElementById('auth-error');
+  if (!email || !password) { err.textContent = 'Please enter your email and password.'; err.style.display='block'; return; }
+  const { data, error } = await supa.auth.signInWithPassword({ email, password });
+  if (error) { err.textContent = error.message; err.style.display='block'; return; }
+  currentUser = data.user;
+  const hasProfile = await loadFromSupabase();
+  if (!hasProfile) { showScreen('onboard'); return; }
+  document.getElementById('bottomNav').style.display = 'flex';
+  buildHomeScreen(); switchTab('home'); updateProfileScreen();
+}
+
+async function signUp() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value.trim();
+  const err = document.getElementById('auth-error');
+  if (!email || !password) { err.textContent = 'Please enter your email and password.'; err.style.display='block'; return; }
+  if (password.length < 6) { err.textContent = 'Password must be at least 6 characters.'; err.style.display='block'; return; }
+  const { data, error } = await supa.auth.signUp({ email, password });
+  if (error) { err.textContent = error.message; err.style.display='block'; return; }
+  currentUser = data.user;
+  showScreen('onboard');
+}
+
+async function signOut() {
+  await supa.auth.signOut();
+  currentUser = null;
+  state = { name:'', dueDate:null, currentWeek:12, scratchedWeeks:{}, journals:{}, gratitude:{} };
+  localStorage.clear();
+  document.getElementById('bottomNav').style.display = 'none';
+  showScreen('auth');
 }
 
 function getWeekData(w) { return WEEKS.find(d => d.w === w) || WEEKS[9]; }
@@ -1860,6 +2010,7 @@ function doScratch(e) {
     s.hint.style.color = 'var(--rose)';
     state.scratchedWeeks[activeWeek] = true;
     saveState();
+    saveScratch(activeWeek);
     buildHomeScreen();
   }
 }
@@ -1869,6 +2020,7 @@ function saveJournal() {
   if (!text) return;
   state.journals[activeWeek] = text;
   saveState();
+  saveJournalToCloud(activeWeek, text);
   const saved = document.getElementById('jp-saved');
   saved.classList.add('show');
   setTimeout(() => saved.classList.remove('show'), 2500);
@@ -1884,6 +2036,7 @@ function saveGratitude() {
   if (!g1 && !g2 && !g3) return;
   state.gratitude[activeWeek] = { 1: g1, 2: g2, 3: g3 };
   saveState();
+  saveGratitudeToCloud(activeWeek, g1, g2, g3);
   const saved = document.getElementById('grat-saved');
   if (saved) {
     saved.classList.add('show');
@@ -1946,6 +2099,10 @@ function updateProfileScreen() {
   document.getElementById('stat-scratched').textContent = Object.keys(state.scratchedWeeks).length;
   document.getElementById('stat-written').textContent = Object.values(state.journals).filter(Boolean).length;
   document.getElementById('prof-due').textContent = state.dueDate || 'Not set';
+  if (currentUser) {
+    const signOutBtn = document.getElementById('sign-out-btn');
+    if (signOutBtn) signOutBtn.style.display = 'block';
+  }
   document.getElementById('prof-weeks-left').textContent = `${40 - w} weeks`;
   document.getElementById('prof-trimester').textContent = w < 14 ? 'First (Weeks 3–13)' : w < 28 ? 'Second (Weeks 14–27)' : 'Third (Weeks 28–40)';
   document.getElementById('stat-week').textContent = w;
@@ -1988,6 +2145,15 @@ function resetApp() {
 let sageHistory = [];
 
 // Load sage memory from localStorage
+async function loadSageMemoryFromCloud() {
+  const cloudMessages = await loadSageFromCloud();
+  if (cloudMessages && cloudMessages.length > 0) {
+    sageHistory = cloudMessages.map(m => ({ role: m.role, content: m.content }));
+    return true;
+  }
+  return false;
+}
+
 function loadSageMemory() {
   try {
     const saved = localStorage.getItem('bloom_sage_memory');
@@ -2082,7 +2248,11 @@ function initSage() {
   const name = state.name ? state.name.split(' ')[0] : 'Mama';
   const w = state.currentWeek;
   const trimester = w < 14 ? 'first' : w < 28 ? 'second' : 'third';
-  const hasMemory = loadSageMemory();
+  let hasMemory = false;
+  if (currentUser) {
+    hasMemory = await loadSageMemoryFromCloud();
+  }
+  if (!hasMemory) hasMemory = loadSageMemory();
 
   if (hasMemory && sageHistory.length > 0) {
     const msgs = document.getElementById('sage-messages');
@@ -2288,6 +2458,7 @@ async function sendSageMessage(overrideText) {
 
   appendSageMessage('user', text);
   sageHistory.push({ role: 'user', content: text });
+  if (currentUser) saveSageToCloud('user', text);
   sageTyping = true;
   showTyping();
 
@@ -2310,7 +2481,7 @@ async function sendSageMessage(overrideText) {
     removeTyping();
     appendSageMessage('sage', reply);
     sageHistory.push({ role: 'assistant', content: reply });
-    saveSageMemory();
+    saveSageMemory('assistant', reply);
 
   } catch(err) {
     console.log('Sage API error:', err.message);
@@ -2319,7 +2490,7 @@ async function sendSageMessage(overrideText) {
     const reply = buildFallbackResponse(text, sageHistory);
     appendSageMessage('sage', reply);
     sageHistory.push({ role: 'assistant', content: reply });
-    saveSageMemory();
+    saveSageMemory('assistant', reply);
   }
 
   if (sageHistory.length > 30) sageHistory = sageHistory.slice(-30);
