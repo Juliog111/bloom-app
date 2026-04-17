@@ -2239,7 +2239,7 @@ If she references something she wrote, acknowledge it specifically. If she's in 
 One last thing: she is doing something extraordinary. She is growing a human being. Remind her of that when it fits — not constantly, but when she needs to hear it.`;
 }
 
-function initSage() {
+async function initSage() {
   document.getElementById('sage-week-badge').textContent = `Week ${state.currentWeek}`;
   if (sageInitialized) return;
   sageInitialized = true;
