@@ -1132,9 +1132,8 @@ html, body {
         <div class="hero-cta">This week's experience →</div>
       </div>
       <div class="hero-fruit" id="hero-fruit-circle">
-        <svg width="40" height="40" viewBox="0 0 60 60" fill="none" id="hero-fruit-svg"></svg>
+        <img id="hero-fruit-img" alt="" style="width:50px;height:50px;object-fit:contain"/>
       </div>
-    </div>
 
     <!-- Sage card -->
     <div class="sage-home-card animate-in" onclick="switchTab('sage')" style="animation-delay:0.1s">
@@ -1182,7 +1181,7 @@ html, body {
       </div>
       <div class="wk-header-right">
         <div class="wk-fruit-circle">
-          <svg width="40" height="40" viewBox="0 0 60 60" fill="none" id="wd-fruit-svg"></svg>
+          <img id="wd-fruit-img" alt="" style="width:48px;height:48px;object-fit:contain"/>
         </div>
         <div class="wk-fruit-name" id="wd-fruit-name">—</div>
       </div>
@@ -1734,14 +1733,35 @@ async function loadSageFromCloud() {
 }
 
 function calcWeek(dueDateStr) {
-  if (!dueDateStr) return 12;
-  const parts = dueDateStr.split('-');
-  const due = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+  if (!dueDateStr) return 1;
+  // Accept both YYYY-MM-DD and MM/DD/YYYY
+  let due;
+  if (dueDateStr.includes('/')) {
+    const p = dueDateStr.split('/');
+    due = new Date(parseInt(p[2]), parseInt(p[0]) - 1, parseInt(p[1]));
+  } else {
+    const p = dueDateStr.split('-');
+    due = new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
+  }
   const now = new Date(); now.setHours(0,0,0,0);
-  const msLeft = due - now;
-  const weeksLeft = msLeft / (7 * 24 * 60 * 60 * 1000);
+  const weeksLeft = (due - now) / (7 * 24 * 60 * 60 * 1000);
   const week = Math.round(40 - weeksLeft);
-  return Math.max(3, Math.min(40, week));
+  return Math.max(1, Math.min(40, week));
+}
+
+function fruitImageUrl(w) {
+  const slugs = {
+    1:'poppyseed',2:'appleseed',3:'sesameseed',4:'sweetpea',5:'lentil',
+    6:'kidneybean',7:'blueberry',8:'raspberry',9:'grape',10:'kumquat',
+    11:'fig',12:'plum',13:'lemon',14:'peach',15:'apple',
+    16:'avocado',17:'pear',18:'sweetpotato',19:'mango',20:'banana',
+    21:'carrot',22:'papaya',23:'grapefruit',24:'corn',25:'rutabaga',
+    26:'scallion',27:'cauliflower',28:'eggplant',29:'butternutsquash',30:'cabbage',
+    31:'coconut',32:'jicama',33:'pineapple',34:'cantaloupe',35:'honeydew',
+    36:'romaine',37:'wintermelon',38:'leek',39:'watermelon',40:'pumpkin'
+  };
+  const num = String(w).padStart(2,'0');
+  return `https://uncgolzzdthxqcnxjmtk.supabase.co/storage/v1/object/public/fruit-illustrations/fruits/week_${num}_${slugs[w]}.png`;
 }
 
 // ─── ONBOARDING ──────────────────────────────────────────────────────────────
@@ -1827,7 +1847,7 @@ function buildHomeScreen() {
   document.getElementById('hero-week-num').textContent = `Week ${w}`;
   document.getElementById('hero-week-title').textContent = d.title;
   document.getElementById('status-week-label').textContent = `Week ${w} of 40`;
-  document.getElementById('hero-fruit-svg').innerHTML = d.svg;
+  document.getElementById('hero-fruit-img').src = fruitImageUrl(w);
 
   // Progress
   const pct = Math.round(((w - 3) / 37) * 100);
@@ -1904,7 +1924,7 @@ function openWeek(w) {
 
   document.getElementById('wd-num').textContent = w;
   document.getElementById('wd-title').textContent = d.title;
-  document.getElementById('wd-fruit-svg').innerHTML = d.svg;
+  document.getElementById('wd-fruit-img').src = fruitImageUrl(w);
   document.getElementById('wd-fruit-name').textContent = d.fruit;
   document.getElementById('wd-body').textContent = d.body;
   document.getElementById('wd-nourish').textContent = `"${d.nourish}"`;
